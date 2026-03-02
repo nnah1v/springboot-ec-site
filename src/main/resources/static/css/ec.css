@@ -1,0 +1,713 @@
+@charset "UTF-8";
+
+/* ===== 全体 ===== */
+.ec-category-page {
+	max-width: 1100px;
+}
+
+/* ===== パンくず（独自クラス） ===== */
+.ec-breadcrumb {
+	color: #666;
+}
+
+.ec-breadcrumb-link {
+	color: #666;
+	text-decoration: none;
+}
+
+.ec-breadcrumb-link:hover {
+	text-decoration: underline;
+}
+
+.ec-breadcrumb-sep {
+	margin: 0 8px;
+	color: #bbb;
+}
+
+.ec-breadcrumb-current {
+	color: #666;
+}
+
+/* ===== 見出し/説明 ===== */
+.ec-title {
+	font-size: 22px;
+	font-weight: 700;
+	margin: 0 0 8px;
+}
+
+.ec-lead {
+	margin: 0;
+	color: #666;
+	line-height: 1.8;
+	font-size: 14px;
+}
+
+/* ===== 画像帯 ===== */
+.ec-hero {
+	border: 1px solid #eee;
+	background: #fafafa;
+}
+
+.ec-hero-img {
+	width: 100%;
+	height: auto;
+	aspect-ratio: 16 / 6;
+	object-fit: cover;
+	display: block;
+}
+
+/* ===== セクション見出し ===== */
+.ec-section-title {
+	font-size: 14px;
+	font-weight: 700;
+}
+
+.ec-more-link {
+	font-size: 12px;
+	color: #333;
+	text-decoration: none;
+}
+
+.ec-more-link:hover {
+	text-decoration: underline;
+}
+
+.ec-ranking-placeholder {
+	height: 56px;
+	border-top: 1px solid #eee;
+}
+
+/* ===== サブカテゴリ（チップ） ===== */
+.ec-subtitle {
+	font-size: 14px;
+	font-weight: 700;
+	margin: 0 0 10px;
+}
+
+.ec-chip-list {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 10px;
+}
+
+.ec-chip {
+	display: inline-block;
+	padding: 10px 14px;
+	border: 1px solid #eee;
+	border-radius: 999px;
+	background: #fff;
+	color: #333;
+	text-decoration: none;
+	font-size: 13px;
+}
+
+.ec-chip:hover {
+	border-color: #ddd;
+}
+
+/* ===== 並び替え/件数/ページャ ===== */
+.ec-controls {
+	display: grid;
+	gap: 10px;
+}
+
+.ec-sort {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 10px;
+	align-items: center;
+}
+
+.ec-sort-label {
+	font-size: 13px;
+	font-weight: 700;
+	color: #333;
+	margin-right: 8px;
+}
+
+.ec-sort-link {
+	font-size: 13px;
+	color: #666;
+	text-decoration: none;
+}
+
+.ec-sort-link:hover {
+	text-decoration: underline;
+}
+
+.ec-sort-link.is-active {
+	color: #111;
+	font-weight: 700;
+	text-decoration: underline;
+}
+
+.ec-count {
+	color: #666;
+	text-align: center;
+}
+
+.ec-pagination {
+	display: flex;
+	justify-content: center;
+	gap: 12px;
+	align-items: center;
+}
+
+.ec-page {
+	font-size: 13px;
+	color: #666;
+	text-decoration: none;
+	padding: 2px 6px;
+}
+
+.ec-page.is-active {
+	color: #111;
+	font-weight: 700;
+	text-decoration: underline;
+}
+
+.ec-page-ellipsis {
+	color: #999;
+}
+
+/* =========================
+   ページャ行（件数 + ページネーション + 表示件数）
+   ========================= */
+
+/* 修正（CSS）：ページネーション周りを横並び */
+.ec-pager-row {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 16px;
+}
+
+/* 修正（CSS）：件数表示は左寄せにする（中央固定を解除） */
+.ec-pager-row .ec-count {
+	text-align: left;
+}
+
+/* 修正（CSS）：総ページ表示 */
+.ec-page-total {
+	color: #888;
+	pointer-events: none;
+}
+
+/* 修正（CSS）：前へ/次へが押せない時の見た目 */
+.ec-page.is-disabled {
+	color: #bbb;
+	pointer-events: none;
+	text-decoration: none;
+}
+
+/* 修正（CSS）：表示件数をグレーにしてページネーション横へ */
+.ec-size {
+	color: #888;
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	justify-content: flex-end;
+	white-space: nowrap;
+}
+
+.ec-size-label {
+	margin-right: 6px;
+}
+
+/* 修正（CSS）：表示件数リンクはグレー、activeだけ濃く */
+.ec-size-link {
+	color: #888;
+	text-decoration: none;
+	padding: 2px 6px;
+	border-radius: 6px;
+}
+
+.ec-size-link:hover {
+	text-decoration: underline;
+}
+
+.ec-size-link.is-active {
+	color: #111;
+	font-weight: 700;
+	text-decoration: underline;
+}
+
+/* 修正（CSS）：スマホでは縦積みにして崩れ防止 */
+@media (max-width: 768px) {
+	.ec-pager-row {
+		flex-direction: column;
+		align-items: stretch;
+	}
+
+	.ec-pagination {
+		justify-content: center;
+	}
+
+	.ec-size {
+		justify-content: center;
+	}
+}
+
+/* ===== 商品カード ===== */
+.ec-product {
+	height: 100%;
+}
+
+.ec-product-media {
+	border: 1px solid #eee;
+	background: #fff;
+}
+
+.ec-media-top {
+	padding: 10px 10px 0;
+}
+
+.ec-media-more {
+	font-size: 12px;
+	color: #777;
+}
+
+.ec-media-main {
+	display: block;
+	padding: 10px;
+}
+
+.ec-product-img {
+	width: 100%;
+	aspect-ratio: 1 / 1;
+	object-fit: cover;
+	background: #f5f5f5;
+	display: block;
+}
+
+.ec-thumbs {
+	display: flex;
+	gap: 8px;
+	padding: 0 10px 10px;
+}
+
+.ec-thumb {
+	width: 100%;
+	max-width: 64px;
+	aspect-ratio: 1 / 1;
+	object-fit: cover;
+	background: #f5f5f5;
+	border: 1px solid #eee;
+}
+
+/* 商品情報 */
+.ec-product-body {
+	padding: 12px 0 0;
+}
+
+.ec-badges {
+	display: flex;
+	gap: 8px;
+	margin-bottom: 8px;
+}
+
+.ec-badge {
+	font-size: 12px;
+	padding: 2px 8px;
+	border: 1px solid #eee;
+	border-radius: 999px;
+	color: #333;
+	background: #fff;
+}
+
+.ec-product-name {
+	font-size: 14px;
+	line-height: 1.6;
+	margin: 0 0 8px;
+	font-weight: 700;
+}
+
+.ec-product-link {
+	color: #111;
+	text-decoration: none;
+}
+
+.ec-product-link:hover {
+	text-decoration: underline;
+}
+
+.ec-price {
+	display: flex;
+	align-items: baseline;
+	gap: 6px;
+	margin-bottom: 10px;
+}
+
+.ec-price-value {
+	font-weight: 800;
+}
+
+.ec-price-unit,
+.ec-tax {
+	font-size: 12px;
+	color: #666;
+}
+
+.ec-actions {
+	display: flex;
+	gap: 8px;
+	align-items: center;
+}
+
+.ec-cart-btn {
+	flex: 1;
+}
+
+.ec-fav-btn {
+	width: 40px;
+}
+
+/* ふわっと */
+.ec-product:hover {
+	transform: translateY(-4px);
+	transition: 0.2s;
+}
+
+/* =========================
+   2段ヘッダー
+   ========================= */
+
+.ec-topbar {
+	background: #111;
+	color: #fff;
+	height: 56px;
+	display: flex;
+	align-items: center;
+}
+
+.ec-topbar-inner {
+	position: relative;
+	width: 100%;
+	height: 56px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+/* 中央ロゴ */
+.ec-brand {
+	display: inline-flex;
+	align-items: center;
+	gap: 10px;
+	color: #fff;
+	text-decoration: none;
+	font-weight: 700;
+	font-size: 22px;
+	letter-spacing: 0.06em;
+}
+
+/* 右上ログイン */
+.ec-login-link {
+	position: absolute;
+	right: 12px;
+	top: 50%;
+	transform: translateY(-50%);
+	color: #fff;
+	text-decoration: none;
+	font-weight: 600;
+	font-size: 14px;
+}
+
+.ec-login-link:hover {
+	text-decoration: underline;
+}
+
+/* 下段アイコン帯 */
+.ec-iconbar {
+	background: #fff;
+	border-top: 1px solid #ddd;
+	border-bottom: 1px solid #ddd;
+	position: sticky;
+	top: 0;
+	z-index: 1000;
+}
+
+.ec-iconbar-grid {
+	display: grid;
+	grid-template-columns: repeat(5, 1fr);
+}
+
+.ec-icon-item {
+	padding: 10px 0;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	text-decoration: none;
+	color: #111;
+	gap: 4px;
+}
+
+.ec-icon-item:hover {
+	background: #f6f6f6;
+}
+
+.ec-icon {
+	font-size: 28px;
+	line-height: 1;
+}
+
+.ec-icon-label {
+	font-size: 14px;
+	font-weight: 700;
+}
+
+/* =========================
+   カテゴリ一覧（4列・SVG統一）
+   ========================= */
+
+.ec-category-heading {
+	font-size: 26px;
+	font-weight: 700;
+	letter-spacing: 2px;
+}
+
+.ec-category-sub {
+	color: #666;
+	margin-bottom: 20px;
+}
+
+.ec-category-list {
+	display: grid;
+	grid-template-columns: repeat(4, 1fr);
+	gap: 0;
+	border-top: 1px solid #eee;
+}
+
+.ec-category-item {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	padding: 12px 12px;
+	text-decoration: none;
+	color: #333;
+	border-bottom: 1px solid #eee;
+}
+
+.ec-category-item:hover {
+	background: #fafafa;
+}
+
+/* SVG/画像共通のロゴ枠 */
+.ec-category-logo {
+	width: 24px;
+	height: 24px;
+	flex: 0 0 24px;
+	display: inline-block;
+	color: #111;
+}
+
+.ec-category-item img.ec-category-logo {
+	object-fit: contain;
+}
+
+/* 文字：はみ出し対策 */
+.ec-category-item span {
+	font-size: 14px;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+/* 画面幅で列数を落とす */
+@media (max-width: 992px) {
+	.ec-category-list {
+		grid-template-columns: repeat(3, 1fr);
+	}
+}
+
+@media (max-width: 768px) {
+	.ec-category-list {
+		grid-template-columns: repeat(2, 1fr);
+	}
+}
+
+@media (max-width: 480px) {
+	.ec-category-list {
+		grid-template-columns: repeat(1, 1fr);
+	}
+}
+
+/* ===== Bootstrap breadcrumb の青リンク対策 ===== */
+.breadcrumb {
+	color: #6c757d;
+}
+
+.breadcrumb a {
+	color: #6c757d !important;
+	text-decoration: none;
+}
+
+.breadcrumb a:hover {
+	text-decoration: underline;
+}
+
+/* =========================
+   ボタン統一（一覧/詳細 共通）
+   .ec-cart-btn / .cart-button
+   .ec-fav-btn  / .favorite-button
+   ========================= */
+
+/* カート（黒） */
+.ec-cart-btn,
+.cart-button {
+	background-color: #000;
+	color: #fff;
+	border: none;
+}
+
+.ec-cart-btn:hover,
+.cart-button:hover {
+	background-color: #333;
+	color: #fff;
+}
+
+/* お気に入り（白＋ピンク） */
+.ec-fav-btn,
+.favorite-button {
+	background-color: #fff;
+	border: 1px solid #ddd;
+	color: #ff4d8d;
+}
+
+.ec-fav-btn:hover,
+.favorite-button:hover {
+	background-color: #fff0f6;
+	color: #ff2f7a;
+	border-color: #ff2f7a;
+}
+
+/* ===== ログイン ===== */
+
+.ec-login-page {
+	background: #f5f5f5;
+	min-height: calc(100vh - 160px);
+}
+
+.ec-login-card {
+	background: #fff;
+	border: 1px solid rgba(17, 17, 17, 0.12);
+	border-radius: 22px;
+	padding: 28px 26px;
+	box-shadow: 0 14px 40px rgba(0, 0, 0, 0.10);
+}
+
+.ec-login-badge {
+	display: inline-flex;
+	align-items: center;
+	gap: 8px;
+	font-size: 11px;
+	letter-spacing: 0.10em;
+	color: #111;
+	border: 1px solid rgba(17, 17, 17, 0.22);
+	border-radius: 999px;
+	padding: 6px 10px;
+	margin-bottom: 14px;
+}
+
+.ec-login-dot {
+	width: 6px;
+	height: 6px;
+	border-radius: 999px;
+	background: #111;
+	opacity: 0.75;
+}
+
+.ec-login-title {
+	font-size: 22px;
+	font-weight: 800;
+	letter-spacing: 0.06em;
+	margin: 0 0 6px;
+	color: #111;
+}
+
+.ec-login-sub {
+	font-size: 13px;
+	color: #555;
+	margin: 0;
+	line-height: 1.8;
+}
+
+.ec-login-label {
+	display: block;
+	font-size: 12px;
+	font-weight: 700;
+	color: #111;
+	margin: 0 0 6px;
+}
+
+.ec-login-input {
+	border: 1px solid #111;
+	border-radius: 14px;
+	padding: 12px 12px;
+	font-size: 14px;
+}
+
+.ec-login-input:focus {
+	border-color: #111;
+	box-shadow: 0 0 0 0.2rem rgba(0, 0, 0, 0.08);
+}
+
+.ec-login-btn {
+	border-radius: 16px;
+	border: 1px solid #111;
+	background: #111;
+	color: #fff;
+	padding: 12px 14px;
+	font-weight: 800;
+	letter-spacing: 0.06em;
+}
+
+.ec-login-btn:hover {
+	filter: brightness(1.08);
+}
+
+.ec-login-note {
+	font-size: 12px;
+	color: #666;
+	margin: 10px 0 0;
+	line-height: 1.7;
+}
+
+.ec-login-hr {
+	margin: 18px 0;
+	border: 0;
+	height: 1px;
+	background: rgba(17, 17, 17, 0.12);
+}
+
+.ec-login-link {
+	font-size: 12px;
+	color: #111;
+	text-decoration: none;
+	border-bottom: 1px solid rgba(17, 17, 17, 0.35);
+	padding-bottom: 2px;
+}
+
+.ec-login-link:hover {
+	border-bottom-color: rgba(17, 17, 17, 0.75);
+}
+
+.ec-login-bottom {
+	display: flex;
+	align-items: baseline;
+	justify-content: space-between;
+	gap: 12px;
+}
+
+.ec-login-link-strong {
+	color: #111;
+	text-decoration: none;
+	font-weight: 800;
+	border-bottom: 1px solid rgba(17, 17, 17, 0.35);
+	padding-bottom: 2px;
+}
+
+.ec-login-link-strong:hover {
+	border-bottom-color: rgba(17, 17, 17, 0.75);
+}

@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>在庫ログ一覧</title>
+</head>
+<body>
+<h1>在庫ログ一覧</h1>
+
+<table border="1" cellpadding="6" cellspacing="0">
+  <thead>
+    <tr>
+      <th>id</th>
+      <th>product_id</th>
+      <th>delta_qty</th>
+      <th>reason</th>
+      <th>related_order_id</th>
+      <th>created_at</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <tr th:each="log : ${inventoryLogs}">
+      <td th:text="${log.id}">6</td>
+      <td th:text="${log.productId}">1</td>
+      <td th:text="${log.deltaQty}">20</td>
+      <td th:text="${log.reason}">IN</td>
+      <td th:text="${log.relatedOrderId}">0</td>
+      <td th:text="${log.createdAt}">2026-02-27 14:21:06</td>
+    </tr>
+  </tbody>
+</table>
+
+</body>
+</html>
