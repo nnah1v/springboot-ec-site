@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<!-- 会員登録完了画面（白黒ベース／EC共通fragment前提） -->
+<html xmlns:th="https://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head>
+	<!-- 共通meta読み込み（ECのfragment.html前提） -->
+	<div th:replace="~{fragment :: meta}"></div>
+
+	<!-- 共通CSS読み込み（ECのfragment.html前提） -->
+	<div th:replace="~{fragment :: styles}"></div>
+
+	<title>会員登録完了</title>
+</head>
+
+<body>
+	<!-- ヘッダー読み込み（EC） -->
+	<div th:replace="~{fragment :: header}"></div>
+
+	<main class="container py-5">
+		<div class="row justify-content-center">
+			<div class="col-xl-6 col-lg-7 col-md-9">
+
+				<!-- カード（白黒ベース） -->
+				<div class="card border-0 shadow-sm" style="border-radius: 18px;">
+					<div class="card-body p-4 p-md-5 text-center">
+
+						<!-- タイトル -->
+						<div class="mb-3" style="letter-spacing: 0.12em; font-size: 12px; color: #555;">
+							SIGNUP COMPLETE
+						</div>
+						<h1 class="h4 fw-bold mb-3">会員登録が完了しました</h1>
+
+						<!-- メッセージ -->
+						<p class="text-secondary mb-4" style="line-height: 1.8;">
+							ご登録ありがとうございます。<br>
+							ログインして、お買い物をお楽しみください。
+						</p>
+
+						<!-- ボタン（白黒） -->
+						<div class="d-grid gap-2">
+							<a class="btn btn-dark btn-lg" th:href="@{/login}">
+								ログインへ
+							</a>
+
+							<a class="btn btn-outline-dark" th:href="@{/}">
+								トップへ戻る
+							</a>
+						</div>
+
+						<!-- 補足（任意） -->
+						<div class="mt-4 small text-secondary">
+							※メールアドレスとパスワードは忘れないように保管してください。
+						</div>
+
+					</div>
+				</div>
+
+			</div>
+		</div>
+	</main>
+
+	<!-- 共通JS読み込み（ECのfragment.html前提） -->
+	<div th:replace="~{fragment :: scripts}"></div>
+</body>
+
+</html>

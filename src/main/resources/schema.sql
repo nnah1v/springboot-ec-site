@@ -1,3 +1,31 @@
+CREATE TABLE IF NOT EXISTS roles (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  name VARCHAR(50) NOT NULL UNIQUE
+);
+
+CREATE TABLE IF NOT EXISTS users (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  nickname VARCHAR(50) NOT NULL,
+  name VARCHAR(50) NOT NULL,
+  furigana VARCHAR(50) NOT NULL,
+  postal_code VARCHAR(7) NOT NULL,
+  address VARCHAR(255) NOT NULL,
+  phone_number VARCHAR(11) NOT NULL,
+  email VARCHAR(255) NOT NULL UNIQUE,
+  password VARCHAR(255) NOT NULL,
+  role_id INT NOT NULL,
+  enabled BOOLEAN NOT NULL DEFAULT TRUE,
+  created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  FOREIGN KEY (role_id) REFERENCES roles(id)
+  
+);
+
+-- 初期ロール
+INSERT IGNORE INTO roles (id, name) VALUES (1, 'ROLE_USER');
+INSERT IGNORE INTO roles (id, name) VALUES (2, 'ROLE_ADMIN');
+
+
 -- =========================================
 -- インテリア雑貨EC（DB強め）用 schema.sql
 -- 要件：カート＋セット割（数量3以上で10%OFF）＋在庫ログ＋レビュー＋売上ランキング（直近1か月）＋残数表示

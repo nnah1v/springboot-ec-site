@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<!-- 会員登録画面（SignupFormをPOST送信する画面） -->
+<html xmlns:th="https://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head>
+	<!-- 共通meta読み込み（ECのfragment.html前提） -->
+	<div th:replace="~{fragment :: meta}"></div>
+
+	<!-- 共通CSS読み込み（ECのfragment.html前提） -->
+	<div th:replace="~{fragment :: styles}"></div>
+
+	<title>会員登録</title>
+</head>
+
+<body>
+	<!-- 修正（HTML）：MoatTravel依存を削除しECページクラスに統一 -->
+	<div class="ec-page ec-signup-page">
+
+		<!-- ヘッダー読み込み（EC） -->
+		<div th:replace="~{fragment :: header}"></div>
+
+		<main class="container py-4">
+			<div class="row justify-content-center">
+				<div class="col-xl-6 col-lg-7 col-md-9">
+
+					<!-- 修正（HTML）：白黒カードUI -->
+					<section class="ec-auth-card">
+
+						<header class="ec-auth-header">
+							<p class="ec-auth-eyebrow">CREATE ACCOUNT</p>
+							<h1 class="ec-auth-title">会員登録</h1>
+							<p class="ec-auth-sub">必要事項を入力して登録してください</p>
+						</header>
+
+						<!-- /signupへPOST送信・SignupFormとバインド -->
+						<form class="mt-4" method="post" th:action="@{/signup}" th:object="${signupForm}">
+
+
+							<!-- ニックネーム入力欄 -->
+							<div class="row mb-3 align-items-start">
+								<div class="col-md-5">
+									<label for="nickname" class="col-form-label fw-bold">
+										<div class="d-flex align-items-center gap-2">
+											<span>ニックネーム</span>
+											<span class="badge ec-badge-required">必須</span>
+										</div>
+									</label>
+								</div>
+								<div class="col-md-7">
+									<div th:if="${#fields.hasErrors('nickname')}" class="text-danger small mb-2"
+										th:errors="*{nickname}"></div>
+
+									<input type="text" id="nickname" class="form-control ec-input"
+										th:field="*{nickname}" autocomplete="nickname">
+								</div>
+							</div>
+
+							<!-- 氏名入力欄 -->
+							<div class="row mb-3 align-items-start">
+								<div class="col-md-5">
+									<label for="name" class="col-form-label fw-bold">
+										<div class="d-flex align-items-center gap-2">
+											<span>氏名</span>
+											<span class="badge ec-badge-required">必須</span> <!-- 修正（HTML） -->
+										</div>
+									</label>
+								</div>
+								<div class="col-md-7">
+									<div th:if="${#fields.hasErrors('name')}" class="text-danger small mb-2"
+										th:errors="*{name}"></div>
+									<input type="text" class="form-control ec-input" th:field="*{name}"
+										autocomplete="name" autofocus> <!-- 修正（HTML）：placeholder削除 -->
+								</div>
+							</div>
+
+							<!-- フリガナ -->
+							<div class="row mb-3 align-items-start">
+								<div class="col-md-5">
+									<label for="furigana" class="col-form-label fw-bold">
+										<div class="d-flex align-items-center gap-2">
+											<span>フリガナ</span>
+											<span class="badge ec-badge-required">必須</span>
+										</div>
+									</label>
+								</div>
+								<div class="col-md-7">
+									<div th:if="${#fields.hasErrors('furigana')}" class="text-danger small mb-2"
+										th:errors="*{furigana}"></div>
+									<input type="text" class="form-control ec-input" th:field="*{furigana}"> <!-- 修正 -->
+								</div>
+							</div>
+
+
+							<!-- 郵便番号 -->
+							<div class="row mb-3 align-items-start">
+								<div class="col-md-5">
+									<label for="postalCode" class="col-form-label fw-bold">
+										<div class="d-flex align-items-center gap-2">
+											<span>郵便番号</span>
+											<span class="badge ec-badge-required">必須</span>
+										</div>
+									</label>
+								</div>
+								<div class="col-md-7">
+									<div th:if="${#fields.hasErrors('postalCode')}" class="text-danger small mb-2"
+										th:errors="*{postalCode}"></div>
+
+									<input type="text" class="form-control ec-input" th:field="*{postalCode}"
+										inputmode="numeric" pattern="\d{7}" maxlength="7" autocomplete="postal-code">
+								</div>
+							</div>
+
+							<!-- 住所 -->
+							<div class="row mb-3 align-items-start">
+								<div class="col-md-5">
+									<label for="address" class="col-form-label fw-bold">
+										<div class="d-flex align-items-center gap-2">
+											<span>住所</span>
+											<span class="badge ec-badge-required">必須</span>
+										</div>
+									</label>
+								</div>
+								<div class="col-md-7">
+									<div th:if="${#fields.hasErrors('address')}" class="text-danger small mb-2"
+										th:errors="*{address}"></div>
+									<input type="text" class="form-control ec-input" th:field="*{address}"> <!-- 修正 -->
+								</div>
+							</div>
+
+							<!-- 電話番号 -->
+							<div class="row mb-3 align-items-start">
+								<div class="col-md-5">
+									<label for="phoneNumber" class="col-form-label fw-bold">
+										<div class="d-flex align-items-center gap-2">
+											<span>電話番号</span>
+											<span class="badge ec-badge-required">必須</span>
+										</div>
+									</label>
+								</div>
+								<div class="col-md-7">
+									<div th:if="${#fields.hasErrors('phoneNumber')}" class="text-danger small mb-2"
+										th:errors="*{phoneNumber}"></div>
+
+									<input type="text" class="form-control ec-input" th:field="*{phoneNumber}"
+										inputmode="numeric" pattern="\d{10,11}" maxlength="11"
+										autocomplete="tel-national">
+								</div>
+							</div>
+
+							<!-- メールアドレス -->
+							<div class="row mb-3 align-items-start">
+								<div class="col-md-5">
+									<label for="email" class="col-form-label fw-bold">
+										<div class="d-flex align-items-center gap-2">
+											<span>メールアドレス</span>
+											<span class="badge ec-badge-required">必須</span>
+										</div>
+									</label>
+								</div>
+								<div class="col-md-7">
+									<div th:if="${#fields.hasErrors('email')}" class="text-danger small mb-2"
+										th:errors="*{email}"></div>
+									<input type="text" class="form-control ec-input" th:field="*{email}"
+										autocomplete="email"> <!-- 修正 -->
+								</div>
+							</div>
+
+							<!-- パスワード -->
+							<div class="row mb-3 align-items-start">
+								<div class="col-md-5">
+									<label for="password" class="col-form-label fw-bold">
+										<div class="d-flex align-items-center gap-2">
+											<span>パスワード</span>
+											<span class="badge ec-badge-required">必須</span>
+										</div>
+									</label>
+								</div>
+								<div class="col-md-7">
+									<div th:if="${#fields.hasErrors('password')}" class="text-danger small mb-2"
+										th:errors="*{password}"></div>
+									<input type="password" class="form-control ec-input" th:field="*{password}"
+										autocomplete="new-password">
+								</div>
+							</div>
+
+							<!-- パスワード確認 -->
+							<div class="row mb-3 align-items-start">
+								<div class="col-md-5">
+									<label for="passwordConfirmation" class="col-form-label fw-bold">
+										<div class="d-flex align-items-center gap-2">
+											<span>パスワード（確認用）</span>
+											<span class="badge ec-badge-required">必須</span>
+										</div>
+									</label>
+								</div>
+								<div class="col-md-7">
+									<div th:if="${#fields.hasErrors('passwordConfirmation')}"
+										class="text-danger small mb-2" th:errors="*{passwordConfirmation}"></div>
+									<input type="password" class="form-control ec-input"
+										th:field="*{passwordConfirmation}" autocomplete="new-password">
+								</div>
+							</div>
+
+							<!-- 登録ボタン -->
+							<div class="d-flex justify-content-center my-4">
+								<button type="submit" class="btn ec-btn-primary w-50">
+									登録
+								</button>
+							</div>
+
+						</form>
+
+						<div class="text-center ec-auth-link">
+							すでにアカウントをお持ちの方は
+							<a class="ec-link" th:href="@{/login}">ログイン</a>
+						</div>
+					</section>
+
+				</div>
+			</div>
+		</main>
+
+		<!-- フッター読み込み（EC） -->
+		<div th:replace="~{fragment :: footer}"></div>
+
+	</div>
+
+	<!-- 共通JS読み込み（EC） -->
+	<div th:replace="~{fragment :: scripts}"></div>
+
+</body>
+
+</html>

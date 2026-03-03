@@ -27,11 +27,10 @@
 		<!-- 上段：黒帯 -->
 		<header class="ec-topbar">
 			<div class="container-fluid px-3 ec-topbar-inner">
-				<a class="ec-login-link" th:href="@{/login}">ログイン&gt;</a>
 
 				<a class="ec-brand" th:href="@{/}">
 					<!-- ロゴ（簡易） -->
-					<span class="ec-brand-text">住まいのデザイン</span>
+					<span class="ec-brand-text">SÖLA</span>
 				</a>
 			</div>
 		</header>
@@ -81,6 +80,7 @@
 
 	<div th:fragment="scripts" th:remove="tag">
 		<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+		<script th:src="@{/js/ec-form.js}"></script>
 	</div>
 
 </body>

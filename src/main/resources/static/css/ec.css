@@ -582,32 +582,38 @@
 	border-color: #ff2f7a;
 }
 
-/* ===== ログイン ===== */
+/* ==============================================================
+   ログイン（ここだけ差し替え対象）
+==============================================================*/
 
+/* ===== ログイン（高級感） ===== */
+/* [01] 背景：薄いグレージュ */
 .ec-login-page {
-	background: #f5f5f5;
+	background: #f4f3f1;
 	min-height: calc(100vh - 160px);
 }
 
+/* [02] カード：影は薄く広く、角丸大きめ */
 .ec-login-card {
 	background: #fff;
-	border: 1px solid rgba(17, 17, 17, 0.12);
-	border-radius: 22px;
-	padding: 28px 26px;
-	box-shadow: 0 14px 40px rgba(0, 0, 0, 0.10);
+	border: 1px solid rgba(0, 0, 0, 0.10);
+	border-radius: 24px;
+	padding: 42px 40px;
+	box-shadow: 0 24px 60px rgba(0, 0, 0, 0.06);
 }
 
+/* [03] バッジ */
 .ec-login-badge {
 	display: inline-flex;
 	align-items: center;
 	gap: 8px;
 	font-size: 11px;
-	letter-spacing: 0.10em;
+	letter-spacing: 0.12em;
 	color: #111;
-	border: 1px solid rgba(17, 17, 17, 0.22);
+	border: 1px solid rgba(0, 0, 0, 0.16);
 	border-radius: 999px;
-	padding: 6px 10px;
-	margin-bottom: 14px;
+	padding: 7px 12px;
+	margin-bottom: 18px;
 }
 
 .ec-login-dot {
@@ -615,99 +621,191 @@
 	height: 6px;
 	border-radius: 999px;
 	background: #111;
-	opacity: 0.75;
+	opacity: 0.70;
 }
 
+/* [04] タイトル */
 .ec-login-title {
 	font-size: 22px;
-	font-weight: 800;
-	letter-spacing: 0.06em;
-	margin: 0 0 6px;
+	font-weight: 700;
+	letter-spacing: 0.12em;
+	margin: 6px 0 28px;
 	color: #111;
 }
 
-.ec-login-sub {
-	font-size: 13px;
-	color: #555;
-	margin: 0;
-	line-height: 1.8;
-}
-
+/* [05] ラベル */
 .ec-login-label {
 	display: block;
 	font-size: 12px;
-	font-weight: 700;
+	font-weight: 600;
 	color: #111;
-	margin: 0 0 6px;
+	margin: 0 0 8px;
 }
 
+/* [06] 入力（元の状態） */
 .ec-login-input {
-	border: 1px solid #111;
-	border-radius: 14px;
-	padding: 12px 12px;
+	border: 1px solid rgba(0, 0, 0, 0.18);
+	border-radius: 16px;
+	padding: 14px 16px;
 	font-size: 14px;
+	background: #fff;
 }
 
 .ec-login-input:focus {
 	border-color: #111;
-	box-shadow: 0 0 0 0.2rem rgba(0, 0, 0, 0.08);
+	background: #fafafa;
+	box-shadow: none;
 }
 
+/* [07] ボタン */
 .ec-login-btn {
-	border-radius: 16px;
+	border-radius: 999px;
 	border: 1px solid #111;
 	background: #111;
 	color: #fff;
-	padding: 12px 14px;
-	font-weight: 800;
-	letter-spacing: 0.06em;
+	padding: 14px 16px;
+	font-weight: 700;
+	letter-spacing: 0.12em;
 }
 
 .ec-login-btn:hover {
-	filter: brightness(1.08);
+	filter: brightness(1.10);
 }
 
-.ec-login-note {
-	font-size: 12px;
-	color: #666;
+.ec-login-btn:focus,
+.ec-login-btn:active,
+.ec-login-btn:focus:active {
+	background: #111 !important;
+	color: #fff !important;
+	border-color: #111 !important;
+	box-shadow: none !important;
+}
+
+.ec-login-btn:focus-visible {
+	outline: none;
+}
+
+/* [08] 区切り線 */
+.ec-login-hr {
+	margin: 26px 0;
+	border: 0;
+	height: 1px;
+	background: rgba(0, 0, 0, 0.10);
+}
+
+/* [09] リンク */
+.ec-login-card a {
+	color: #111 !important;
+	border-bottom: 1px solid rgba(0, 0, 0, 0.3);
+	text-decoration: none !important;
+	padding-bottom: 2px;
+}
+
+.ec-login-card a:hover {
+	border-bottom-color: rgba(0, 0, 0, 0.7);
+}
+
+/* =============================================================
+   Signup（白黒・おしゃれ：EC統一）
+   ============================================================= */
+
+/* 修正（CSS）：ページ背景 */
+.ec-signup-page {
+	background: #f6f6f6;
+}
+
+/* 修正（CSS）：カード */
+.ec-auth-card {
+	background: #fff;
+	border: 1px solid rgba(0, 0, 0, 0.10);
+	border-radius: 20px;
+	padding: 34px 34px 28px;
+	box-shadow: 0 18px 50px rgba(0, 0, 0, 0.06);
+}
+
+/* 修正（CSS）：ヘッダー */
+.ec-auth-header {
+	text-align: center;
+	margin-bottom: 10px;
+}
+
+.ec-auth-eyebrow {
+	margin: 0 0 8px;
+	font-size: 11px;
+	letter-spacing: 0.14em;
+	color: #777;
+}
+
+.ec-auth-title {
+	margin: 0;
+	font-size: 26px;
+	font-weight: 800;
+	letter-spacing: 0.02em;
+	color: #111;
+}
+
+.ec-auth-sub {
 	margin: 10px 0 0;
+	font-size: 13px;
+	color: #666;
 	line-height: 1.7;
 }
 
-.ec-login-hr {
-	margin: 18px 0;
-	border: 0;
-	height: 1px;
-	background: rgba(17, 17, 17, 0.12);
+/* 修正（CSS）：必須バッジ（白黒） */
+.ec-badge-required {
+	background: #111;
+	color: #fff;
+	border-radius: 999px;
+	padding: 6px 10px;
+	font-size: 11px;
+	letter-spacing: 0.06em;
 }
 
-.ec-login-link {
-	font-size: 12px;
+/* 修正（CSS）：入力 */
+.ec-input {
+	border-radius: 12px;
+	border: 1px solid rgba(0, 0, 0, 0.14);
+	padding: 10px 12px;
+}
+
+.ec-input:focus {
+	border-color: rgba(0, 0, 0, 0.35);
+	box-shadow: 0 0 0 0.2rem rgba(0, 0, 0, 0.08);
+}
+
+/* 修正（CSS）：ボタン（白黒） */
+.ec-btn-primary {
+	background: #111;
+	color: #fff;
+	border: 1px solid #111;
+	border-radius: 999px;
+	padding: 12px 16px;
+	font-weight: 700;
+	letter-spacing: 0.04em;
+	box-shadow: 0 14px 30px rgba(0, 0, 0, 0.12);
+}
+
+.ec-btn-primary:hover {
+	background: #000;
+	border-color: #000;
+	color: #fff;
+	transform: translateY(-1px);
+	transition: 0.15s;
+}
+
+/* 修正（CSS）：リンク */
+.ec-auth-link {
+	margin-top: 6px;
+}
+
+.ec-link {
 	color: #111;
 	text-decoration: none;
-	border-bottom: 1px solid rgba(17, 17, 17, 0.35);
+	border-bottom: 1px solid rgba(0, 0, 0, 0.25);
 	padding-bottom: 2px;
 }
 
-.ec-login-link:hover {
-	border-bottom-color: rgba(17, 17, 17, 0.75);
+.ec-link:hover {
+	border-bottom-color: rgba(0, 0, 0, 0.6);
 }
 
-.ec-login-bottom {
-	display: flex;
-	align-items: baseline;
-	justify-content: space-between;
-	gap: 12px;
-}
-
-.ec-login-link-strong {
-	color: #111;
-	text-decoration: none;
-	font-weight: 800;
-	border-bottom: 1px solid rgba(17, 17, 17, 0.35);
-	padding-bottom: 2px;
-}
-
-.ec-login-link-strong:hover {
-	border-bottom-color: rgba(17, 17, 17, 0.75);
-}

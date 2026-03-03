@@ -1,101 +1,71 @@
 <!DOCTYPE html>
-<!-- ログイン画面（EC風：背景＋カード＋導線強化） -->
-<html xmlns:th="https://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<html xmlns:th="https://www.thymeleaf.org">
 
 <head>
-	<!-- 共通meta -->
 	<div th:replace="~{fragment :: meta}"></div>
-
-	<!-- 共通CSS（Bootstrap＋ec.css） -->
 	<div th:replace="~{fragment :: styles}"></div>
-
 	<title>ログイン</title>
 </head>
 
-<body>
+<body class="ec-login-page">
 
-	<!-- 共通ヘッダー：この1回だけ -->
 	<div th:replace="~{fragment :: header}"></div>
 
 	<main class="ec-login-page">
-
 		<div class="container py-5">
 			<div class="row justify-content-center">
 				<div class="col-xl-5 col-lg-6 col-md-8 col-sm-10">
 
 					<section class="ec-login-card">
 
-						<!-- 上部バッジ -->
 						<div class="ec-login-badge">
 							<span class="ec-login-dot"></span>
 							<span>SECURE SIGN IN</span>
 						</div>
 
-						<header class="mb-3">
-							<h1 class="ec-login-title">ログイン</h1>
-							<p class="ec-login-sub">
-								ログインして、カートの内容を引き継いで購入を続けられます。
-							</p>
-						</header>
-
-						<!-- 認証失敗時（/login?error） -->
-						<div th:if="${param.error}" class="alert alert-danger py-2 small mb-3">
-							メールアドレスまたはパスワードが正しくありません。
-						</div>
+						<h1 class="ec-login-title text-center">ログイン</h1>
 
 						<form th:action="@{/login}" method="post">
 
-							<div class="mb-3">
-								<label class="ec-login-label" for="usernameInput">メールアドレス</label>
-								<input id="usernameInput" type="text" class="form-control ec-login-input"
-									name="username" autocomplete="email" placeholder="example@kurashi-ec.jp" required
-									autofocus>
+							<div class="mb-4">
+								<label class="ec-login-label">メールアドレス</label>
+								<input type="text" class="form-control ec-login-input" name="email"
+									required><!-- 修正（HTML） -->
 							</div>
 
-							<div class="mb-2">
-								<label class="ec-login-label" for="passwordInput">パスワード</label>
-								<input id="passwordInput" type="password" class="form-control ec-login-input"
-									name="password" autocomplete="current-password" placeholder="••••••••" required>
-							</div>
-
-							<div class="d-flex align-items-center justify-content-between mt-2 mb-3">
-								<div class="form-check">
-									<input class="form-check-input" type="checkbox" id="rememberMe" name="remember-me">
-									<label class="form-check-label small" for="rememberMe">ログイン状態を保持</label>
-								</div>
-
-								<a class="ec-login-link" th:href="@{/products}">商品一覧へ戻る</a>
+							<div class="mb-5">
+								<label class="ec-login-label">パスワード</label>
+								<input type="password" class="form-control ec-login-input" name="password" required>
 							</div>
 
 							<button type="submit" class="btn ec-login-btn w-100">
 								ログインする
 							</button>
 
-							<p class="ec-login-note">
-								ログインに失敗する場合は、入力内容を確認してください。
-							</p>
-
 						</form>
 
-						<hr class="ec-login-hr">
+						<hr class="ec-login-divider">
 
-						<div class="ec-login-bottom">
-							<div class="small text-muted">はじめての方はこちら</div>
-							<a th:href="@{/signup}" class="ec-login-link-strong">会員登録</a>
+						<div class="text-center mb-4">
+							<span class="small text-muted">初めての方はこちら</span><br>
+							<a th:href="@{/signup}" class="ec-login-register">
+								会員登録
+							</a>
+						</div>
+
+						<div class="text-center">
+							<a th:href="@{/products}" class="ec-login-back">
+								商品一覧へ戻る
+							</a>
 						</div>
 
 					</section>
-
 				</div>
 			</div>
 		</div>
-
 	</main>
 
-	<!-- 共通フッター：この1回だけ -->
 	<div th:replace="~{fragment :: footer}"></div>
-
-	<!-- 共通JS -->
 	<div th:replace="~{fragment :: scripts}"></div>
 
 </body>
