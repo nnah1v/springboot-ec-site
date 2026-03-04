@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html xmlns:th="https://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head>
+	<div th:replace="~{fragment :: meta}"></div>
+	<div th:replace="~{fragment :: styles}"></div>
+	<title>カート | SÖLA</title>
+</head>
+
+<body class="bg-white text-dark">
+
+	<div th:replace="~{fragment :: header}"></div>
+
+	
+	<main class="container py-5" style="max-width:1000px;">
+
+		<h1 class="fw-light mb-5 border-bottom pb-3">Shopping Cart</h1>
+
+		<div th:if="${#lists.isEmpty(cartItems)}" class="text-center text-muted py-5">
+			<p class="mb-4">カートに商品はありません。</p>
+			<a th:href="@{/products}" class="btn btn-dark px-4">商品を見る</a>
+		</div>
+
+		<div th:unless="${#lists.isEmpty(cartItems)}">
+
+			<table class="table align-middle">
+				<thead class="border-bottom">
+					<tr class="text-muted small">
+						<th>商品</th>
+						<th class="text-end">単価</th>
+						<th class="text-center">数量</th>
+						<th class="text-end">小計</th>
+						<th></th>
+					</tr>
+				</thead>
+
+				<tbody>
+					<tr th:each="item : ${cartItems}" class="border-bottom">
+						<td class="fw-light" th:text="${item.product.name}">
+							Product
+						</td>
+
+						<td class="text-end" th:text="${#numbers.formatInteger(item.product.price,1,'COMMA')} + '円'">
+						</td>
+
+						<td class="text-center" th:text="${item.quantity}">
+						</td>
+
+						<td class="text-end fw-medium"
+							th:text="${#numbers.formatInteger(item.product.price * item.quantity,1,'COMMA')} + '円'">
+						</td>
+
+						<td class="text-end">
+							<form th:action="@{/cart/remove}" method="post">
+								<input type="hidden" name="productId" th:value="${item.product.id}">
+								<button type="submit" class="btn btn-sm btn-outline-dark">
+									削除
+								</button>
+							</form>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+
+			<div class="text-end fs-5 mt-4 border-top pt-4">
+				<span class="text-muted me-2">合計</span>
+				<span class="fw-semibold" th:text="${totalAmount} + '円'">
+				</span>
+			</div>
+
+			<div class="text-end mt-4">
+				<a th:href="@{/orders/confirm}" class="btn btn-dark px-5">
+					購入手続きへ
+				</a>
+			</div>
+
+		</div>
+
+	</main>
+
+	<div th:replace="~{fragment :: footer}"></div>
+	<div th:replace="~{fragment :: scripts}"></div>
+
+</body>
+
+</html>

@@ -12,6 +12,12 @@ import org.springframework.security.web.SecurityFilterChain;
 @EnableWebSecurity
 public class SecurityConfig {
 
+	private final LoginSuccessHandler loginSuccessHandler; // 修正（Java）
+
+	public SecurityConfig(LoginSuccessHandler loginSuccessHandler) { // 修正（Java）
+		this.loginSuccessHandler = loginSuccessHandler; // 修正（Java）
+	}
+
 	@Bean
 	public PasswordEncoder passwordEncoder() {
 		return new BCryptPasswordEncoder();
@@ -24,16 +30,24 @@ public class SecurityConfig {
 				.authorizeHttpRequests(authorize -> authorize
 						.requestMatchers("/css/**", "/images/**", "/js/**").permitAll()
 						.requestMatchers("/admin/**").hasRole("ADMIN")
+
+						// 修正（Java）：ゲストでも閲覧・操作できる範囲
 						.requestMatchers("/", "/login", "/signup/**", "/products", "/products/**").permitAll()
-						.requestMatchers("/mypage/**", "/cart/**", "/orders/**").authenticated()
+						.requestMatchers("/cart/**", "/favorites/**").permitAll() // 修正（Java）
+
+						// 修正（Java）：ログイン必須
+						.requestMatchers("/mypage/**", "/orders/**").authenticated()
 						.anyRequest().authenticated())
 
 				.formLogin(form -> form
 						.loginPage("/login")
 						.loginProcessingUrl("/login")
-						.usernameParameter("email") // 修正（Java）
-						.passwordParameter("password") // 修正（Java）
-						.defaultSuccessUrl("/mypage", true) // 修正（Java）
+						.usernameParameter("email")
+						.passwordParameter("password")
+
+						// 修正（Java）：ログイン成功時にマージしてから遷移（defaultSuccessUrlは使わない）
+						.successHandler(loginSuccessHandler) // 修正（Java）
+
 						.failureUrl("/login?error")
 						.permitAll())
 
@@ -41,6 +55,7 @@ public class SecurityConfig {
 						.logoutSuccessUrl("/products")
 						.permitAll())
 
+				// 修正（Java）：セッション固定攻撃対策。属性は移送されるので引き継ぎに相性が良い
 				.sessionManagement(session -> session
 						.sessionFixation(sessionFixation -> sessionFixation.migrateSession()));
 

@@ -260,12 +260,17 @@
 							</div>
 
 							<div class="ec-actions">
-								<button class="btn btn-dark btn-sm ec-cart-btn cart-button"
-									type="button">カートに入れる</button>
-								<button class="btn btn-outline-secondary btn-sm ec-fav-btn favorite-button"
-									type="button" aria-label="favorite">♡</button>
-							</div>
+								<button class="btn btn-dark btn-sm ec-cart-btn cart-button" type="button">カートに入れる</button>
 
+								<button class="btn btn-outline-secondary btn-sm ec-fav-btn favorite-button"
+									type="button"
+									th:attr="data-product-id=${product.getId()},data-favorited=${isFavorited}"
+									aria-label="favorite">
+									<i class="bi"
+										th:classappend="${isFavorited} ? ' bi-heart-fill is-favorited' : ' bi-heart'"
+										aria-hidden="true"></i>
+								</button>
+							</div>
 						</div>
 
 					</article>

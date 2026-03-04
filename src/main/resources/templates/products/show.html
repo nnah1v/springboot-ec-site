@@ -90,12 +90,15 @@
 											<button type="button" class="btn cart-button flex-grow-1 py-3">
 												カートに入れる
 											</button>
-
-											<button type="button" class="btn favorite-button rounded"
-												style="width:48px;height:48px;">
-												<i class="bi bi-heart"></i>
+											
+											<button type="button" class="btn favorite-button rounded ec-fav-btn"
+												style="width:48px;height:48px;"
+												th:attr="data-product-id=${product.getId()},data-favorited=${isFavorited}"
+												aria-label="favorite">
+												<i class="bi"
+													th:classappend="${isFavorited} ? ' bi-heart-fill is-favorited' : ' bi-heart'"
+													aria-hidden="true"></i>
 											</button>
-
 										</div>
 
 									</div>

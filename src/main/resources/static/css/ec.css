@@ -173,8 +173,6 @@
 /* =========================
    ページャ行（件数 + ページネーション + 表示件数）
    ========================= */
-
-/* 修正（CSS）：ページネーション周りを横並び */
 .ec-pager-row {
 	display: flex;
 	align-items: center;
@@ -182,25 +180,21 @@
 	gap: 16px;
 }
 
-/* 修正（CSS）：件数表示は左寄せにする（中央固定を解除） */
 .ec-pager-row .ec-count {
 	text-align: left;
 }
 
-/* 修正（CSS）：総ページ表示 */
 .ec-page-total {
 	color: #888;
 	pointer-events: none;
 }
 
-/* 修正（CSS）：前へ/次へが押せない時の見た目 */
 .ec-page.is-disabled {
 	color: #bbb;
 	pointer-events: none;
 	text-decoration: none;
 }
 
-/* 修正（CSS）：表示件数をグレーにしてページネーション横へ */
 .ec-size {
 	color: #888;
 	display: flex;
@@ -214,7 +208,6 @@
 	margin-right: 6px;
 }
 
-/* 修正（CSS）：表示件数リンクはグレー、activeだけ濃く */
 .ec-size-link {
 	color: #888;
 	text-decoration: none;
@@ -232,7 +225,6 @@
 	text-decoration: underline;
 }
 
-/* 修正（CSS）：スマホでは縦積みにして崩れ防止 */
 @media (max-width: 768px) {
 	.ec-pager-row {
 		flex-direction: column;
@@ -371,7 +363,6 @@
 /* =========================
    2段ヘッダー
    ========================= */
-
 .ec-topbar {
 	background: #111;
 	color: #fff;
@@ -401,7 +392,7 @@
 	letter-spacing: 0.06em;
 }
 
-/* 右上ログイン */
+/* 右上ログイン（今は未使用なら残してOK） */
 .ec-login-link {
 	position: absolute;
 	right: 12px;
@@ -427,11 +418,13 @@
 	z-index: 1000;
 }
 
+/* 修正（CSS）：5列はgridで維持（崩れ防止） */
 .ec-iconbar-grid {
 	display: grid;
 	grid-template-columns: repeat(5, 1fr);
 }
 
+/* aタグのアイコン項目 */
 .ec-icon-item {
 	padding: 10px 0;
 	display: flex;
@@ -441,6 +434,7 @@
 	text-decoration: none;
 	color: #111;
 	gap: 4px;
+	height: 100%;
 }
 
 .ec-icon-item:hover {
@@ -457,10 +451,48 @@
 	font-weight: 700;
 }
 
+/* 修正（CSS）：dropdownの箱もセルいっぱいに */
+.ec-iconbar-grid .dropdown {
+	height: 100%;
+}
+
+/* 修正（CSS）：メニューボタンをa.ec-icon-itemと同じ見た目に揃える（位置が高い問題対策） */
+.ec-icon-button {
+	padding: 10px 0;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	gap: 4px;
+	width: 100%;
+	height: 100%;
+	background: transparent;
+	border: 0;
+	color: #111;
+	text-align: center;
+	line-height: 1;
+}
+
+/* 修正（CSS）：hover時も同じ */
+.ec-icon-button:hover {
+	background: #f6f6f6;
+}
+
+/* 修正（CSS）：フォーカス枠/影を消す（変な枠対策） */
+.ec-icon-button:focus,
+.ec-icon-button:focus-visible {
+	outline: 0;
+	box-shadow: none;
+}
+
+/* 修正（CSS）：▼矢印を消す */
+.ec-icon-button.dropdown-toggle::after {
+	display: none;
+}
+
 /* =========================
    カテゴリ一覧（4列・SVG統一）
    ========================= */
-
 .ec-category-heading {
 	font-size: 26px;
 	font-weight: 700;
@@ -514,7 +546,6 @@
 	text-overflow: ellipsis;
 }
 
-/* 画面幅で列数を落とす */
 @media (max-width: 992px) {
 	.ec-category-list {
 		grid-template-columns: repeat(3, 1fr);
@@ -549,10 +580,7 @@
 
 /* =========================
    ボタン統一（一覧/詳細 共通）
-   .ec-cart-btn / .cart-button
-   .ec-fav-btn  / .favorite-button
    ========================= */
-
 /* カート（黒） */
 .ec-cart-btn,
 .cart-button {
@@ -567,33 +595,35 @@
 	color: #fff;
 }
 
-/* お気に入り（白＋ピンク） */
-.ec-fav-btn,
-.favorite-button {
-	background-color: #fff;
-	border: 1px solid #ddd;
-	color: #ff4d8d;
+/* 修正（CSS）：ボタンは白、枠は薄グレー */
+.ec-fav-btn.favorite-button,
+.favorite-button.ec-fav-btn {
+	background: #fff !important;
+	border: 1px solid #ddd !important;
 }
 
-.ec-fav-btn:hover,
-.favorite-button:hover {
-	background-color: #fff0f6;
-	color: #ff2f7a;
-	border-color: #ff2f7a;
+/* 修正（CSS）：枠も塗りもピンク（ハートだけ） */
+.favorite-button .bi {
+	color: #ff4d8d !important;
+	/* 枠がピンク */
+	font-size: 18px;
+	transition: transform .15s ease;
 }
+
+/* 修正（CSS）：押した時だけ軽く */
+.favorite-button:active .bi {
+	transform: scale(0.9);
+}
+
 
 /* ==============================================================
    ログイン（ここだけ差し替え対象）
-==============================================================*/
-
-/* ===== ログイン（高級感） ===== */
-/* [01] 背景：薄いグレージュ */
+   ============================================================== */
 .ec-login-page {
 	background: #f4f3f1;
 	min-height: calc(100vh - 160px);
 }
 
-/* [02] カード：影は薄く広く、角丸大きめ */
 .ec-login-card {
 	background: #fff;
 	border: 1px solid rgba(0, 0, 0, 0.10);
@@ -602,7 +632,6 @@
 	box-shadow: 0 24px 60px rgba(0, 0, 0, 0.06);
 }
 
-/* [03] バッジ */
 .ec-login-badge {
 	display: inline-flex;
 	align-items: center;
@@ -624,7 +653,6 @@
 	opacity: 0.70;
 }
 
-/* [04] タイトル */
 .ec-login-title {
 	font-size: 22px;
 	font-weight: 700;
@@ -633,7 +661,6 @@
 	color: #111;
 }
 
-/* [05] ラベル */
 .ec-login-label {
 	display: block;
 	font-size: 12px;
@@ -642,7 +669,6 @@
 	margin: 0 0 8px;
 }
 
-/* [06] 入力（元の状態） */
 .ec-login-input {
 	border: 1px solid rgba(0, 0, 0, 0.18);
 	border-radius: 16px;
@@ -657,7 +683,6 @@
 	box-shadow: none;
 }
 
-/* [07] ボタン */
 .ec-login-btn {
 	border-radius: 999px;
 	border: 1px solid #111;
@@ -685,7 +710,6 @@
 	outline: none;
 }
 
-/* [08] 区切り線 */
 .ec-login-hr {
 	margin: 26px 0;
 	border: 0;
@@ -693,7 +717,6 @@
 	background: rgba(0, 0, 0, 0.10);
 }
 
-/* [09] リンク */
 .ec-login-card a {
 	color: #111 !important;
 	border-bottom: 1px solid rgba(0, 0, 0, 0.3);
@@ -708,13 +731,10 @@
 /* =============================================================
    Signup（白黒・おしゃれ：EC統一）
    ============================================================= */
-
-/* 修正（CSS）：ページ背景 */
 .ec-signup-page {
 	background: #f6f6f6;
 }
 
-/* 修正（CSS）：カード */
 .ec-auth-card {
 	background: #fff;
 	border: 1px solid rgba(0, 0, 0, 0.10);
@@ -723,7 +743,6 @@
 	box-shadow: 0 18px 50px rgba(0, 0, 0, 0.06);
 }
 
-/* 修正（CSS）：ヘッダー */
 .ec-auth-header {
 	text-align: center;
 	margin-bottom: 10px;
@@ -751,7 +770,6 @@
 	line-height: 1.7;
 }
 
-/* 修正（CSS）：必須バッジ（白黒） */
 .ec-badge-required {
 	background: #111;
 	color: #fff;
@@ -761,7 +779,6 @@
 	letter-spacing: 0.06em;
 }
 
-/* 修正（CSS）：入力 */
 .ec-input {
 	border-radius: 12px;
 	border: 1px solid rgba(0, 0, 0, 0.14);
@@ -773,7 +790,6 @@
 	box-shadow: 0 0 0 0.2rem rgba(0, 0, 0, 0.08);
 }
 
-/* 修正（CSS）：ボタン（白黒） */
 .ec-btn-primary {
 	background: #111;
 	color: #fff;
@@ -793,7 +809,6 @@
 	transition: 0.15s;
 }
 
-/* 修正（CSS）：リンク */
 .ec-auth-link {
 	margin-top: 6px;
 }
@@ -808,4 +823,3 @@
 .ec-link:hover {
 	border-bottom-color: rgba(0, 0, 0, 0.6);
 }
-

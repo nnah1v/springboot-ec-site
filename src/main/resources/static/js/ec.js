@@ -34,3 +34,30 @@ document.addEventListener('DOMContentLoaded', () => {
 	EcFormUtils.normalizeNumeric('input[name="postalCode"]', 7);
 
 });
+
+// 修正（JS）：お気に入りトグル（枠⇄塗り）
+document.addEventListener("click", async (event) => {
+	const button = event.target.closest(".favorite-button");
+	if (!button) return;
+
+	const productId = button.dataset.productId;
+	const icon = button.querySelector(".bi");
+	if (!productId || !icon) return;
+
+	const isFilled = icon.classList.contains("bi-heart-fill");
+
+	const csrfToken = document.querySelector('meta[name="_csrf"]')?.content;
+	const csrfHeader = document.querySelector('meta[name="_csrf_header"]')?.content;
+
+	const url = isFilled ? `/favorites/${productId}/delete` : `/favorites/${productId}`;
+
+	const headers = {};
+	if (csrfToken && csrfHeader) headers[csrfHeader] = csrfToken;
+
+	const response = await fetch(url, { method: "POST", headers });
+	if (!response.ok) return;
+
+	// 枠⇄塗り（色はCSSで常にピンク）
+	icon.classList.toggle("bi-heart-fill", !isFilled);
+	icon.classList.toggle("bi-heart", isFilled);
+});

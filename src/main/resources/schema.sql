@@ -27,21 +27,11 @@ INSERT IGNORE INTO roles (id, name) VALUES (2, 'ROLE_ADMIN');
 
 
 -- =========================================
--- インテリア雑貨EC（DB強め）用 schema.sql
+-- インテリア雑貨EC用 schema.sql
 -- 要件：カート＋セット割（数量3以上で10%OFF）＋在庫ログ＋レビュー＋売上ランキング（直近1か月）＋残数表示
 -- =========================================
 
--- -------------------------
--- users：購入者（ログインユーザー）
--- -------------------------
-CREATE TABLE IF NOT EXISTS users (
-	id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-	name VARCHAR(100) NOT NULL,
-	email VARCHAR(255) NOT NULL UNIQUE,
-	password VARCHAR(255) NOT NULL,
-	created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-	updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
-);
+
 
 
 -- -------------------------
@@ -177,3 +167,15 @@ CREATE TABLE IF NOT EXISTS discount_rules(
 -- -------------------------
 INSERT INTO discount_rules (rule_type, min_qty, percent_off, is_active)
 VALUES ('CART_QTY_GTE_PERCENT_OFF', 3, 10, 1);
+
+-- 修正（SQL）：お気に入り（ログイン後はDBへ永続化、ログイン前はSessionで保持）
+CREATE TABLE IF NOT EXISTS favorites (
+  id INT NOT NULL AUTO_INCREMENT,
+  user_id INT NOT NULL,
+  product_id INT NOT NULL,
+  created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (id),
+  UNIQUE KEY uk_favorites_user_product (user_id, product_id),
+  CONSTRAINT fk_favorites_user FOREIGN KEY (user_id) REFERENCES users(id),
+  CONSTRAINT fk_favorites_product FOREIGN KEY (product_id) REFERENCES products(id)
+);
