@@ -9,19 +9,33 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.natsuka.ec.dto.SessionCart;
 import com.natsuka.ec.entity.CartItem;
+import com.natsuka.ec.entity.Product;
 import com.natsuka.ec.repository.CartItemRepository;
+import com.natsuka.ec.repository.ProductRepository; 
 
 @Service
 public class CartService {
 
 	private final CartItemRepository cartItemRepository;
+	private final ProductRepository productRepository; 
 
-	public CartService(CartItemRepository cartItemRepository) { // 修正（Java）
-		this.cartItemRepository = cartItemRepository; // 修正（Java）
+	public CartService(CartItemRepository cartItemRepository, ProductRepository productRepository) { 
+		this.cartItemRepository = cartItemRepository;
+		this.productRepository = productRepository; 
 	}
 
 	public List<CartItem> findCartItems(Integer userId) {
 		return cartItemRepository.findByUserIdOrderByUpdatedAtDesc(userId);
+	}
+
+	//：合計金額（DB）
+	public int calculateTotalAmount(Integer userId) {
+		List<CartItem> cartItems = findCartItems(userId);
+		int totalAmount = 0;
+		for (CartItem cartItem : cartItems) {
+			totalAmount += cartItem.getProduct().getPrice() * cartItem.getQuantity();
+		}
+		return totalAmount;
 	}
 
 	@Transactional
@@ -30,17 +44,22 @@ public class CartService {
 			return;
 		}
 
-		Optional<CartItem> existing = cartItemRepository.findByUserIdAndProductId(userId, productId);
+		Optional<CartItem> existing = cartItemRepository.findByUserIdAndProduct_Id(userId, productId); 
 		if (existing.isPresent()) {
 			CartItem cartItem = existing.get();
-			cartItem.setQuantity(cartItem.getQuantity() + addQuantity); // 修正（Java）：数量加算
+			cartItem.setQuantity(cartItem.getQuantity() + addQuantity); 
 			cartItemRepository.save(cartItem);
+			return;
+		}
+
+		Product product = productRepository.findById(productId).orElse(null); 
+		if (product == null) {
 			return;
 		}
 
 		CartItem cartItem = new CartItem();
 		cartItem.setUserId(userId);
-		cartItem.setProductId(productId);
+		cartItem.setProduct(product); 
 		cartItem.setQuantity(addQuantity);
 		cartItemRepository.save(cartItem);
 	}
@@ -55,8 +74,8 @@ public class CartService {
 			return;
 		}
 
-		cartItemRepository.findByUserIdAndProductId(userId, productId).ifPresent(cartItem -> {
-			cartItem.setQuantity(newQuantity); // 修正（Java）
+		cartItemRepository.findByUserIdAndProduct_Id(userId, productId).ifPresent(cartItem -> { 
+			cartItem.setQuantity(newQuantity);
 			cartItemRepository.save(cartItem);
 		});
 	}
@@ -66,7 +85,7 @@ public class CartService {
 		if (userId == null || productId == null) {
 			return;
 		}
-		cartItemRepository.findByUserIdAndProductId(userId, productId)
+		cartItemRepository.findByUserIdAndProduct_Id(userId, productId)
 				.ifPresent(cartItemRepository::delete);
 	}
 
@@ -92,7 +111,24 @@ public class CartService {
 		sessionCart.remove(productId);
 	}
 
-	// -------- ログイン成功時：Session→DB --------
+	//：合計金額（Session）
+	public int calculateSessionTotalAmount(SessionCart sessionCart) {
+		if (sessionCart == null || sessionCart.isEmpty()) {
+			return 0;
+		}
+		int totalAmount = 0;
+		for (Map.Entry<Integer, Integer> entry : sessionCart.asUnmodifiableMap().entrySet()) {
+			Integer productId = entry.getKey();
+			Integer quantity = entry.getValue();
+			Product product = productRepository.findById(productId).orElse(null);
+			if (product == null) {
+				continue;
+			}
+			totalAmount += product.getPrice() * quantity;
+		}
+		return totalAmount;
+	}
+
 	@Transactional
 	public void mergeSessionCartToUser(Integer userId, SessionCart sessionCart) {
 		if (userId == null || sessionCart == null || sessionCart.isEmpty()) {
@@ -102,7 +138,7 @@ public class CartService {
 		for (Map.Entry<Integer, Integer> entry : sessionCart.asUnmodifiableMap().entrySet()) {
 			Integer productId = entry.getKey();
 			Integer addQuantity = entry.getValue();
-			addCartItem(userId, productId, addQuantity); // 修正（Java）
+			addCartItem(userId, productId, addQuantity);
 		}
 	}
 }

@@ -20,14 +20,20 @@ public class ProductService {
 		this.productRepository = productRepository;
 	}
 
-	public Page<Product> findActiveProducts(String sort, Pageable pageable) {
+	// 修正（Java）：カテゴリ指定あり版（categoryId）
+	public Page<Product> findActiveProducts(String sort, Pageable pageable, Integer categoryId) {
 
 		int pageNumber = pageable.getPageNumber();
 		int pageSize = pageable.getPageSize();
 
 		if ("popular".equals(sort)) {
 			Pageable popularityPageable = PageRequest.of(pageNumber, pageSize);
-			return productRepository.findActiveProductsOrderByPopularity(popularityPageable);
+
+			if (categoryId == null) { // 修正（Java）
+				return productRepository.findActiveProductsOrderByPopularity(popularityPageable);
+			}
+
+			return productRepository.findActiveProductsOrderByPopularityAndCategoryId(categoryId, popularityPageable); // 修正（Java）
 		}
 
 		Sort sortCondition;
@@ -46,10 +52,20 @@ public class ProductService {
 		}
 
 		Pageable sortedPageable = PageRequest.of(pageNumber, pageSize, sortCondition);
-		return productRepository.findByIsActiveTrue(sortedPageable);
+
+		if (categoryId == null) { // 修正（Java）
+			return productRepository.findByIsActiveTrue(sortedPageable);
+		}
+
+		return productRepository.findByIsActiveTrueAndCategoryId(categoryId, sortedPageable); // 修正（Java）
 	}
 
-	// 修正（Java）：詳細取得
+	// 既存：カテゴリなし版（互換のため残す）
+	public Page<Product> findActiveProducts(String sort, Pageable pageable) {
+		return findActiveProducts(sort, pageable, null); // 修正（Java）
+	}
+
+	// ：詳細取得
 	public Optional<Product> findProductById(Integer id) {
 		return productRepository.findById(id);
 	}

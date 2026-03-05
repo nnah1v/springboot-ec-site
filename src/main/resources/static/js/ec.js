@@ -35,10 +35,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
 });
 
-// 修正（JS）：お気に入りトグル（枠⇄塗り）
+// 修正（JS）：お気に入りトグル（CSRF付き）
 document.addEventListener("click", async (event) => {
 	const button = event.target.closest(".favorite-button");
 	if (!button) return;
+
+	event.preventDefault();
+	event.stopPropagation();
 
 	const productId = button.dataset.productId;
 	const icon = button.querySelector(".bi");
@@ -55,9 +58,12 @@ document.addEventListener("click", async (event) => {
 	if (csrfToken && csrfHeader) headers[csrfHeader] = csrfToken;
 
 	const response = await fetch(url, { method: "POST", headers });
-	if (!response.ok) return;
 
-	// 枠⇄塗り（色はCSSで常にピンク）
+	if (!response.ok) {
+		console.warn("favorite failed", response.status);
+		return;
+	}
+
 	icon.classList.toggle("bi-heart-fill", !isFilled);
 	icon.classList.toggle("bi-heart", isFilled);
-});
+}, true);

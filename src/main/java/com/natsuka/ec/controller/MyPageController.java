@@ -1,31 +1,37 @@
 package com.natsuka.ec.controller;
 
-import java.util.Optional; // 修正（Java）
+import java.util.Collections;
+import java.util.Optional;
+import java.util.Set;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
-import org.springframework.security.core.Authentication; // 修正（Java）
-import org.springframework.security.core.context.SecurityContextHolder; // 修正（Java）
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.natsuka.ec.entity.Product;
-import com.natsuka.ec.entity.User; // 修正（Java）
-import com.natsuka.ec.repository.UserRepository; // 修正（Java）
+import com.natsuka.ec.entity.User;
+import com.natsuka.ec.repository.UserRepository;
+import com.natsuka.ec.service.FavoriteService;
 import com.natsuka.ec.service.ProductService;
 
 @Controller
 public class MyPageController {
 
 	private final ProductService productService;
-	private final UserRepository userRepository; // 修正（Java）
+	private final UserRepository userRepository;
+	private final FavoriteService favoriteService;
 
-	public MyPageController(ProductService productService, UserRepository userRepository) { // 修正（Java）
+	public MyPageController(ProductService productService, UserRepository userRepository,
+			FavoriteService favoriteService) { 
 		this.productService = productService;
-		this.userRepository = userRepository; // 修正（Java）
+		this.userRepository = userRepository;
+		this.favoriteService = favoriteService; 
 	}
 
 	@GetMapping("/mypage")
@@ -34,15 +40,20 @@ public class MyPageController {
 			@RequestParam(name = "sort", defaultValue = "popular") String sort,
 			Model model) {
 
-		// 修正（Java）：ログイン中のemailを取得
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		String email = authentication.getName();
 
-		// 修正（Java）：ログインユーザーを取得してModelへ
 		Optional<User> optionalUser = userRepository.findByEmail(email);
 		optionalUser.ifPresent(user -> model.addAttribute("loginUser", user));
 
-		// 既存：商品一覧
+		// ：お気に入りSetをModelへ（戻っても維持の本体）
+		Set<Integer> favoriteProductIdSet = Collections.emptySet();
+		if (optionalUser.isPresent()) {
+			Integer userId = optionalUser.get().getId();
+			favoriteProductIdSet = favoriteService.findFavoriteProductIds(userId);
+		}
+		model.addAttribute("favoriteProductIdSet", favoriteProductIdSet);
+
 		Page<Product> productPage = productService.findActiveProducts(sort, pageable);
 		model.addAttribute("productPage", productPage);
 		model.addAttribute("sort", sort);

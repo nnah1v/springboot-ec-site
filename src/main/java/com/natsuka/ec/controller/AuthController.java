@@ -33,14 +33,14 @@ public class AuthController {
 			return "auth/signup";
 		}
 
-		// 修正（Java）：確認用パスワード一致チェック
+		// ：確認用パスワード一致チェック
 		if (!signupForm.getPassword().equals(signupForm.getPasswordConfirmation())) {
 			bindingResult.rejectValue("passwordConfirmation",
 					"passwordConfirmation.mismatch",
 					"パスワードが一致しません。");
 		}
 
-		// 修正（Java）：メール重複チェック
+		// ：メール重複チェック
 		if (userService.existsByEmail(signupForm.getEmail())) {
 			bindingResult.rejectValue("email",
 					"email.duplicate",
@@ -53,11 +53,11 @@ public class AuthController {
 
 		userService.register(signupForm);
 
-		// 修正（Java）：完了画面へ
+		// ：完了画面へ
 		return "redirect:/signup/complete";
 	}
 
-	// 修正（Java）：完了画面（GET）
+	// ：完了画面（GET）
 	@GetMapping("/signup/complete")
 	public String signupComplete() {
 		return "auth/signup_complete";

@@ -2,6 +2,8 @@ package com.natsuka.ec.service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Set; // 修正（Java）
+import java.util.stream.Collectors; // 修正（Java）
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,22 +25,32 @@ public class FavoriteService {
 		return favoriteRepository.findByUserIdOrderByCreatedAtDesc(userId);
 	}
 
+	// 修正（Java）：お気に入り商品IDだけをSetで取得
+	public Set<Integer> findFavoriteProductIds(Integer userId) {
+		return favoriteRepository.findByUserIdOrderByCreatedAtDesc(userId)
+				.stream()
+				.map(Favorite::getProductId)
+				.collect(Collectors.toSet());
+	}
+
 	@Transactional
 	public void addFavorite(Integer userId, Integer productId) {
 		if (favoriteRepository.existsByUserIdAndProductId(userId, productId)) {
-			return; // 修正（Java）：重複登録は無視（実務仕様）
+			return;
 		}
+
 		Favorite favorite = new Favorite();
 		favorite.setUserId(userId);
 		favorite.setProductId(productId);
 		favorite.setCreatedAt(LocalDateTime.now());
+
 		favoriteRepository.save(favorite);
 	}
 
 	@Transactional
 	public void removeFavorite(Integer userId, Integer productId) {
 		favoriteRepository.findByUserIdAndProductId(userId, productId)
-				.ifPresent(favoriteRepository::delete); // 修正（Java）：存在しない場合も安全
+				.ifPresent(favoriteRepository::delete);
 	}
 
 	@Transactional
@@ -46,8 +58,9 @@ public class FavoriteService {
 		if (sessionFavorites == null || sessionFavorites.isEmpty()) {
 			return;
 		}
+
 		for (Integer productId : sessionFavorites.getProductIdSet()) {
-			addFavorite(userId, productId); // 修正（Java）：重複はaddFavorite側で無視
+			addFavorite(userId, productId);
 		}
 	}
 }

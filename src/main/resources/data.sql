@@ -1,29 +1,107 @@
 -- =========================================
 -- data.sql（初期データ）
--- 目的：商品表示＋残数表示（在庫ログ集計）をすぐ確認できる状態にする
+-- 目的：カテゴリ連動（category_id） + 表示確認
 -- =========================================
 
 -- -------------------------
--- products：初期商品（北欧インテリア雑貨）
+-- categories：先に投入（FKの親）
 -- -------------------------
-INSERT INTO products (id, name, price, description, category, image_name, is_active)
-VALUES
-  (1, 'ウッドフレーム（A4）', 2980, '天然木のA4フレーム。', 'アート', 'frame_a4.jpg', 1),
-  (2, 'ガラス花瓶（S）', 1980, '小さめの透明ガラス花瓶。', '花瓶', 'vase_s.jpg', 1),
-  (3, 'テーブルランプ（LED）', 7980, '暖色LEDのテーブルランプ。', '照明', 'lamp_led.jpg', 1),
-  (4, 'ラタン収納バスケット', 4980, 'ラタン素材の収納バスケット。', '収納', 'basket_rattan.jpg', 1),
-  (5, 'クッションカバー（リネン）', 2480, 'リネン素材のクッションカバー。', 'ファブリック', 'cushion_linen.jpg', 1)
-  ON DUPLICATE KEY UPDATE
-  name = VALUES(name),
-  price = VALUES(price),
-  description = VALUES(description),
-  category = VALUES(category),
-  image_name = VALUES(image_name),
-  is_active = VALUES(is_active);
+INSERT IGNORE INTO categories (name, sort_order) VALUES
+('ソファ', 1),
+('チェア・椅子', 2),
+('収納家具', 3),
+('キッチン収納・食器棚', 4),
+('ごみ箱・玄関小物', 5),
+('ライト・照明', 6),
+('ラグ・カーペット', 7),
+('クッション', 8),
+('時計', 9),
+('花器・プランター・グリーン', 10),
+('キッチン家電・キッチン用品', 11),
+('デザイン家電・オーディオ', 12);
+
+-- =========================================
+-- 修正（SQL）: ダミー商品（カテゴリ連動・画像はNOIMAGE固定）
+--「子→親」の順でDELETEが必要
+-- =========================================
+DELETE FROM favorites WHERE product_id >= 6;
+DELETE FROM cart_items WHERE product_id >= 6;
+DELETE FROM product_inventory_logs WHERE product_id >= 6;
+DELETE FROM products WHERE id >= 6;
 
 -- -------------------------
--- product_inventory_logs：入荷（IN）各20
--- delta_qty：入荷は +、販売は -
+-- products：初期商品（1-5）
+-- category_idをJOINで埋める（category文字列も互換で残す）
+-- -------------------------
+INSERT INTO products (id, name, price, description, category, category_id, image_name, is_active)
+SELECT v.id, v.name, v.price, v.description, v.category, c.id, v.image_name, v.is_active
+FROM (
+	SELECT 1 AS id, 'ウッドフレーム（A4）' AS name, 2980 AS price, '天然木のA4フレーム。' AS description, 'アート' AS category, 'frame_a4.jpg' AS image_name, 1 AS is_active
+	UNION ALL SELECT 2, 'ガラス花瓶（S）', 1980, '小さめの透明ガラス花瓶。', '花器・プランター・グリーン', 'vase_s.jpg', 1
+	UNION ALL SELECT 3, 'テーブルランプ（LED）', 7980, '暖色LEDのテーブルランプ。', 'ライト・照明', 'lamp_led.jpg', 1
+	UNION ALL SELECT 4, 'ラタン収納バスケット', 4980, 'ラタン素材の収納バスケット。', '収納家具', 'basket_rattan.jpg', 1
+	UNION ALL SELECT 5, 'クッションカバー（リネン）', 2480, 'リネン素材のクッションカバー。', 'クッション', 'cushion_linen.jpg', 1
+) v
+LEFT JOIN categories c ON c.name = v.category
+ON DUPLICATE KEY UPDATE
+	name = VALUES(name),
+	price = VALUES(price),
+	description = VALUES(description),
+	category = VALUES(category),
+	category_id = VALUES(category_id),
+	image_name = VALUES(image_name),
+	is_active = VALUES(is_active);
+
+-- -------------------------
+-- products：ダミー商品（6-35）
+-- category_idをJOINで埋める（category文字列も互換で残す）
+-- -------------------------
+INSERT INTO products (id, name, price, description, category, category_id, image_name, is_active)
+SELECT v.id, v.name, v.price, v.description, v.category, c.id, v.image_name, v.is_active
+FROM (
+	SELECT 6 AS id,  '北欧風 2人掛けソファ（ファブリック）' AS name, 19800 AS price, 'リビングの主役になる2人掛けソファ。' AS description, 'ソファ' AS category, 'noimage.png' AS image_name, 1 AS is_active
+	UNION ALL SELECT 7,  'カウチソファ（ライトグレー）', 17900, '省スペースでも置けるカウチタイプ。', 'ソファ', 'noimage.png', 1
+	UNION ALL SELECT 8,  'ダイニングチェア（オーク）', 12800, '木目がきれいな定番チェア。', 'チェア・椅子', 'noimage.png', 1
+	UNION ALL SELECT 9,  'スタッキングスツール（ナチュラル）', 5900, '重ねて収納できるスツール。', 'チェア・椅子', 'noimage.png', 1
+	UNION ALL SELECT 10, 'チェスト（3段）', 14900, '小物をすっきり整理できる3段チェスト。', '収納家具', 'noimage.png', 1
+	UNION ALL SELECT 11, 'オープンシェルフ（5段）', 13900, '見せる収納に便利なオープン棚。', '収納家具', 'noimage.png', 1
+	UNION ALL SELECT 12, 'サイドボード（幅90cm）', 18900, 'リビングの収納にちょうどいい。', '収納家具', 'noimage.png', 1
+	UNION ALL SELECT 13, 'キッチンボード（幅120cm）', 19900, '食器をまとめて収納できるキッチンボード。', 'キッチン収納・食器棚', 'noimage.png', 1
+	UNION ALL SELECT 14, 'カップボード（ロータイプ）', 16800, '圧迫感の少ないロータイプ。', 'キッチン収納・食器棚', 'noimage.png', 1
+	UNION ALL SELECT 15, 'ペダル式ゴミ箱（20L）', 4200, 'フタ付きでニオイ対策にも。', 'ごみ箱・玄関小物', 'noimage.png', 1
+	UNION ALL SELECT 16, 'スリッパラック（省スペース）', 3600, '玄関をすっきり見せるラック。', 'ごみ箱・玄関小物', 'noimage.png', 1
+	UNION ALL SELECT 17, 'テーブルライト（調光LED）', 7800, '読書灯にちょうどいい調光ライト。', 'ライト・照明', 'noimage.png', 1
+	UNION ALL SELECT 18, 'フロアライト（スリム）', 15900, '間接照明として使いやすい。', 'ライト・照明', 'noimage.png', 1
+	UNION ALL SELECT 19, 'ペンダントライト（ガラス）', 12900, '食卓に映えるガラスシェード。', 'ライト・照明', 'noimage.png', 1
+	UNION ALL SELECT 20, 'ラグ（北欧柄 140×200）', 19800, '季節を問わず使える北欧柄。', 'ラグ・カーペット', 'noimage.png', 1
+	UNION ALL SELECT 21, 'シャギーラグ（円形）', 9900, '足元がふわっと心地いい。', 'ラグ・カーペット', 'noimage.png', 1
+	UNION ALL SELECT 22, 'キッチンマット（45×180）', 2900, '汚れに強いキッチンマット。', 'ラグ・カーペット', 'noimage.png', 1
+	UNION ALL SELECT 23, 'クッション（45×45）', 2500, 'ソファに合わせやすい定番サイズ。', 'クッション', 'noimage.png', 1
+	UNION ALL SELECT 24, 'クッションカバー（リネン）', 2400, '肌触りの良いリネン素材。', 'クッション', 'noimage.png', 1
+	UNION ALL SELECT 25, '置き時計（シンプル）', 3900, '見やすい文字盤の置き時計。', '時計', 'noimage.png', 1
+	UNION ALL SELECT 26, '壁掛け時計（静音）', 5200, 'カチカチ音が気になりにくい。', '時計', 'noimage.png', 1
+	UNION ALL SELECT 27, '花瓶（ガラス S）', 1800, '一輪挿しにちょうどいいサイズ。', '花器・プランター・グリーン', 'noimage.png', 1
+	UNION ALL SELECT 28, 'プランター（陶器）', 3200, '観葉植物に合う陶器プランター。', '花器・プランター・グリーン', 'noimage.png', 1
+	UNION ALL SELECT 29, '電気ケトル（1.0L）', 6900, '必要な分だけすぐ沸かせる。', 'キッチン家電・キッチン用品', 'noimage.png', 1
+	UNION ALL SELECT 30, 'トースター（2枚焼き）', 9800, '毎朝のトーストが手軽に。', 'キッチン家電・キッチン用品', 'noimage.png', 1
+	UNION ALL SELECT 31, 'キッチンツールセット（5点）', 2400, '最低限そろうツールセット。', 'キッチン家電・キッチン用品', 'noimage.png', 1
+	UNION ALL SELECT 32, 'Bluetoothスピーカー（コンパクト）', 8900, 'デスクに置ける小型スピーカー。', 'デザイン家電・オーディオ', 'noimage.png', 1
+	UNION ALL SELECT 33, 'デスクライト（USB給電）', 4200, '在宅ワーク向けUSBライト。', 'デザイン家電・オーディオ', 'noimage.png', 1
+	UNION ALL SELECT 34, 'ミニ加湿器（卓上）', 3500, '乾燥が気になる季節に。', 'デザイン家電・オーディオ', 'noimage.png', 1
+	UNION ALL SELECT 35, 'アロマディフューザー（超音波）', 5200, '香りでリラックスできる。', 'デザイン家電・オーディオ', 'noimage.png', 1
+) v
+JOIN categories c ON c.name = v.category
+ON DUPLICATE KEY UPDATE
+	name = VALUES(name),
+	price = VALUES(price),
+	description = VALUES(description),
+	category = VALUES(category),
+	category_id = VALUES(category_id),
+	image_name = VALUES(image_name),
+	is_active = VALUES(is_active);
+
+-- -------------------------
+-- product_inventory_logs：入荷（1-5）
 -- -------------------------
 INSERT IGNORE INTO product_inventory_logs (product_id, delta_qty, reason, related_order_id)
 VALUES
@@ -33,70 +111,7 @@ VALUES
   (4, 20, 'IN', 0),
   (5, 20, 'IN', 0);
 
--- -------------------------
--- discount_rules
--- schema.sqlで既にINSERTしているなら、ここは書かない（重複する）
--- -------------------------
--- INSERT INTO discount_rules (rule_type, min_qty, percent_off, is_active)
--- VALUES ('CART_QTY_GTE_PERCENT_OFF', 3, 10, 1);
-
--- =========================================
--- 修正（SQL）: ダミー商品（カテゴリ連動・画像はNOIMAGE固定）
--- =========================================
-
--- 先に掃除（id6以上を消した運用に合わせる）
-DELETE FROM product_inventory_logs
-WHERE product_id >= 6;
-
-DELETE FROM products
-WHERE id >= 6;
-
--- 追加30件（画像は全件 noimage.png）
-INSERT IGNORE INTO products (id, name, price, description, category, image_name, is_active)
-VALUES
-  (6,  '北欧風 2人掛けソファ（ファブリック）', 19800, 'リビングの主役になる2人掛けソファ。', 'ソファ', 'noimage.png', 1),
-  (7,  'カウチソファ（ライトグレー）', 17900, '省スペースでも置けるカウチタイプ。', 'ソファ', 'noimage.png', 1),
-
-  (8,  'ダイニングチェア（オーク）', 12800, '木目がきれいな定番チェア。', 'チェア・椅子', 'noimage.png', 1),
-  (9,  'スタッキングスツール（ナチュラル）', 5900, '重ねて収納できるスツール。', 'チェア・椅子', 'noimage.png', 1),
-
-  (10, 'チェスト（3段）', 14900, '小物をすっきり整理できる3段チェスト。', '収納家具', 'noimage.png', 1),
-  (11, 'オープンシェルフ（5段）', 13900, '見せる収納に便利なオープン棚。', '収納家具', 'noimage.png', 1),
-  (12, 'サイドボード（幅90cm）', 18900, 'リビングの収納にちょうどいい。', '収納家具', 'noimage.png', 1),
-
-  (13, 'キッチンボード（幅120cm）', 19900, '食器をまとめて収納できるキッチンボード。', 'キッチン収納・食器棚', 'noimage.png', 1),
-  (14, 'カップボード（ロータイプ）', 16800, '圧迫感の少ないロータイプ。', 'キッチン収納・食器棚', 'noimage.png', 1),
-
-  (15, 'ペダル式ゴミ箱（20L）', 4200, 'フタ付きでニオイ対策にも。', 'ごみ箱・玄関小物', 'noimage.png', 1),
-  (16, 'スリッパラック（省スペース）', 3600, '玄関をすっきり見せるラック。', 'ごみ箱・玄関小物', 'noimage.png', 1),
-
-  (17, 'テーブルライト（調光LED）', 7800, '読書灯にちょうどいい調光ライト。', 'ライト・照明', 'noimage.png', 1),
-  (18, 'フロアライト（スリム）', 15900, '間接照明として使いやすい。', 'ライト・照明', 'noimage.png', 1),
-  (19, 'ペンダントライト（ガラス）', 12900, '食卓に映えるガラスシェード。', 'ライト・照明', 'noimage.png', 1),
-
-  (20, 'ラグ（北欧柄 140×200）', 19800, '季節を問わず使える北欧柄。', 'ラグ・カーペット', 'noimage.png', 1),
-  (21, 'シャギーラグ（円形）', 9900, '足元がふわっと心地いい。', 'ラグ・カーペット', 'noimage.png', 1),
-  (22, 'キッチンマット（45×180）', 2900, '汚れに強いキッチンマット。', 'ラグ・カーペット', 'noimage.png', 1),
-
-  (23, 'クッション（45×45）', 2500, 'ソファに合わせやすい定番サイズ。', 'クッション', 'noimage.png', 1),
-  (24, 'クッションカバー（リネン）', 2400, '肌触りの良いリネン素材。', 'クッション', 'noimage.png', 1),
-
-  (25, '置き時計（シンプル）', 3900, '見やすい文字盤の置き時計。', '時計', 'noimage.png', 1),
-  (26, '壁掛け時計（静音）', 5200, 'カチカチ音が気になりにくい。', '時計', 'noimage.png', 1),
-
-  (27, '花瓶（ガラス S）', 1800, '一輪挿しにちょうどいいサイズ。', '花器・プランター・グリーン', 'noimage.png', 1),
-  (28, 'プランター（陶器）', 3200, '観葉植物に合う陶器プランター。', '花器・プランター・グリーン', 'noimage.png', 1),
-
-  (29, '電気ケトル（1.0L）', 6900, '必要な分だけすぐ沸かせる。', 'キッチン家電・キッチン用品', 'noimage.png', 1),
-  (30, 'トースター（2枚焼き）', 9800, '毎朝のトーストが手軽に。', 'キッチン家電・キッチン用品', 'noimage.png', 1),
-  (31, 'キッチンツールセット（5点）', 2400, '最低限そろうツールセット。', 'キッチン家電・キッチン用品', 'noimage.png', 1),
-
-  (32, 'Bluetoothスピーカー（コンパクト）', 8900, 'デスクに置ける小型スピーカー。', 'デザイン家電・オーディオ', 'noimage.png', 1),
-  (33, 'デスクライト（USB給電）', 4200, '在宅ワーク向けUSBライト。', 'デザイン家電・オーディオ', 'noimage.png', 1),
-  (34, 'ミニ加湿器（卓上）', 3500, '乾燥が気になる季節に。', 'デザイン家電・オーディオ', 'noimage.png', 1),
-  (35, 'アロマディフューザー（超音波）', 5200, '香りでリラックスできる。', 'デザイン家電・オーディオ', 'noimage.png', 1);
-
--- 在庫（残数表示用：各商品ランダム…はやめて固定でOK）
+-- 在庫（6-35）
 INSERT IGNORE INTO product_inventory_logs (product_id, delta_qty, reason, related_order_id)
 VALUES
   (6,  12, 'IN_SEED', 0),(7,  8,  'IN_SEED', 0),(8,  15, 'IN_SEED', 0),(9,  10, 'IN_SEED', 0),

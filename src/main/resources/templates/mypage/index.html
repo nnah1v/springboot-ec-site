@@ -229,7 +229,7 @@
 		<section th:if="${productPage != null && productPage.totalElements > 0}">
 			<div class="row g-4">
 				<div class="col-12 col-sm-6 col-lg-4 col-xl-3" th:each="product : ${productPage.content}">
-					<article class="ec-product">
+					<article class="ec-product ec-product-card">
 
 						<div class="ec-product-media">
 
@@ -257,12 +257,21 @@
 								<span class="ec-price-unit">円</span>
 								<span class="ec-tax">税込</span>
 							</div>
-
 							<div class="ec-actions">
 								<button class="btn btn-dark btn-sm ec-cart-btn cart-button"
 									type="button">カートに入れる</button>
-								<button class="btn btn-outline-secondary btn-sm ec-fav-btn favorite-button"
-									type="button" aria-label="favorite">♡</button>
+
+								<!-- 修正（HTML）：products/indexと統一 -->
+								<button type="button"
+									class="btn btn-outline-secondary btn-sm ec-fav-btn favorite-button"
+									th:attr="data-product-id=${product.id}"
+									th:with="favorited=${favoriteProductIdSet != null && favoriteProductIdSet.contains(product.id)}"
+									aria-label="favorite">
+
+									<i class="bi"
+										th:classappend="${favorited} ? ' bi-heart-fill is-favorited' : ' bi-heart'"
+										aria-hidden="true"></i>
+								</button>
 							</div>
 
 						</div>

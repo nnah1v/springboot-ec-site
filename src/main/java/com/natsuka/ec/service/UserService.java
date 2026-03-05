@@ -19,7 +19,7 @@ public class UserService {
 		this.passwordEncoder = passwordEncoder;
 	}
 
-	// 修正（Java）：Controllerの重複チェック用に公開
+	// ：Controllerの重複チェック用に公開
 	public boolean existsByEmail(String email) {
 		return userRepository.existsByEmail(email);
 	}
@@ -31,14 +31,14 @@ public class UserService {
 
 		user.setName(signupForm.getName());
 		user.setFurigana(signupForm.getFurigana());
-		user.setNickname(signupForm.getNickname()); // 修正（Java）
+		user.setNickname(signupForm.getNickname()); 
 		user.setPostalCode(signupForm.getPostalCode());
 		user.setAddress(signupForm.getAddress());
 		user.setPhoneNumber(signupForm.getPhoneNumber());
 		user.setEmail(signupForm.getEmail());
 		user.setPassword(passwordEncoder.encode(signupForm.getPassword()));
 
-		// 修正（Java）：一般ユーザー固定
+		// ：一般ユーザー固定
 		user.setRoleId(1); // ROLE_USER
 		user.setEnabled(true);
 

@@ -15,35 +15,35 @@ import lombok.Data;
 @Table(name = "products")
 @Data
 public class Product {
-	
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "id")
-	 private Integer id;
-	
+	private Integer id;
+
 	@Column(name = "name")
 	private String name;
-	
+
 	@Column(name = "price")
 	private Integer price;
-	
+
 	@Column(name = "description")
 	private String description;
-	
-	@Column(name = "category")
-	private String category;
-	
+
+	// 修正（Java）：カテゴリID
+	@Column(name = "category_id")
+	private Integer categoryId;
+
 	@Column(name = "image_name")
 	private String imageName;
-	
+
 	@Column(name = "is_active")
 	private Boolean isActive;
-	
+
 	@Column(name = "created_at", insertable = false, updatable = false)
 	private LocalDateTime createdAt;
 
 	@Column(name = "updated_at", insertable = false, updatable = false)
 	private LocalDateTime updatedAt;
-
 
 }

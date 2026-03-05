@@ -54,11 +54,9 @@ public class SecurityConfig {
 				.logout(logout -> logout
 						.logoutSuccessUrl("/products")
 						.permitAll())
-
-				// 修正（Java）：セッション固定攻撃対策。属性は移送されるので引き継ぎに相性が良い
+				// 修正（Java）：IDは変えるが属性は保持（まずこれで復旧）
 				.sessionManagement(session -> session
-						.sessionFixation(sessionFixation -> sessionFixation.migrateSession()));
-
+						.sessionFixation(sessionFixation -> sessionFixation.changeSessionId()));
 		return httpSecurity.build();
 	}
 }

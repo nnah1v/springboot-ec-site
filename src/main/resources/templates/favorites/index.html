@@ -17,7 +17,7 @@
 
 		<div th:if="${#lists.isEmpty(favorites)}" class="text-center text-muted py-5">
 			<p class="mb-4">お気に入りはまだありません。</p>
-			<a th:href="@{/products}" class="btn btn-dark px-4">
+			<a th:href="@{/mypage}" class="btn btn-dark px-4">
 				商品を見る
 			</a>
 		</div>
@@ -42,11 +42,8 @@
 							詳細を見る
 						</a>
 
-						<form th:action="@{/favorites/remove}" method="post">
-							<input type="hidden" name="productId" th:value="${product.id}">
-							<button type="submit" class="btn btn-sm btn-dark">
-								削除
-							</button>
+						<form th:action="@{/favorites/{productId}/delete(productId=${product.id})}" method="post">
+							<button type="submit" class="btn btn-sm btn-dark">削除</button>
 						</form>
 					</div>
 

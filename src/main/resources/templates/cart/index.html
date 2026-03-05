@@ -11,18 +11,18 @@
 
 	<div th:replace="~{fragment :: header}"></div>
 
-	
 	<main class="container py-5" style="max-width:1000px;">
 
 		<h1 class="fw-light mb-5 border-bottom pb-3">Shopping Cart</h1>
 
-		<div th:if="${#lists.isEmpty(cartItems)}" class="text-center text-muted py-5">
+		<div th:if="${#lists.isEmpty(cartLines)}" class="text-center text-muted py-5">
 			<p class="mb-4">カートに商品はありません。</p>
 			<a th:href="@{/products}" class="btn btn-dark px-4">商品を見る</a>
 		</div>
 
-		<div th:unless="${#lists.isEmpty(cartItems)}">
+		<div th:unless="${#lists.isEmpty(cartLines)}">
 
+			<!-- 修正（HTML）：ゲスト/ログインで行の参照先が違うので分岐 -->
 			<table class="table align-middle">
 				<thead class="border-bottom">
 					<tr class="text-muted small">
@@ -35,42 +35,69 @@
 				</thead>
 
 				<tbody>
-					<tr th:each="item : ${cartItems}" class="border-bottom">
-						<td class="fw-light" th:text="${item.product.name}">
-							Product
+					<!-- 修正（HTML）：ゲスト（CartLineView） -->
+					<tr th:if="${isGuest}" th:each="line : ${cartLines}" class="border-bottom">
+						<td class="fw-light" th:text="${line.productName}">Product</td>
+
+						<td class="text-end" th:text="${#numbers.formatInteger(line.unitPrice,1,'COMMA')} + '円'">
 						</td>
+
+						<td class="text-center" th:text="${line.quantity}"></td>
+
+						<td class="text-end fw-medium"
+							th:text="${#numbers.formatInteger(line.lineTotal,1,'COMMA')} + '円'">
+						</td>
+
+						<td class="text-end">
+							<form th:action="@{/cart/delete}" method="post">
+								<input type="hidden" name="productId" th:value="${line.productId}">
+								<input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+								<button type="submit" class="btn btn-sm btn-outline-dark">削除</button>
+							</form>
+						</td>
+					</tr>
+
+					<!-- 修正（HTML）：ログイン（CartItem + product） -->
+					<tr th:unless="${isGuest}" th:each="item : ${cartLines}" class="border-bottom">
+						<td class="fw-light" th:text="${item.product.name}">Product</td>
 
 						<td class="text-end" th:text="${#numbers.formatInteger(item.product.price,1,'COMMA')} + '円'">
 						</td>
 
-						<td class="text-center" th:text="${item.quantity}">
-						</td>
+						<td class="text-center" th:text="${item.quantity}"></td>
 
 						<td class="text-end fw-medium"
 							th:text="${#numbers.formatInteger(item.product.price * item.quantity,1,'COMMA')} + '円'">
 						</td>
 
 						<td class="text-end">
-							<form th:action="@{/cart/remove}" method="post">
+							<form th:action="@{/cart/delete}" method="post">
 								<input type="hidden" name="productId" th:value="${item.product.id}">
-								<button type="submit" class="btn btn-sm btn-outline-dark">
-									削除
-								</button>
+								<input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+								<button type="submit" class="btn btn-sm btn-outline-dark">削除</button>
 							</form>
 						</td>
 					</tr>
+
 				</tbody>
 			</table>
 
+			<!-- 修正（HTML）：合計は共通（Controllerで必ずセット） -->
 			<div class="text-end fs-5 mt-4 border-top pt-4">
 				<span class="text-muted me-2">合計</span>
-				<span class="fw-semibold" th:text="${totalAmount} + '円'">
-				</span>
+				<span class="fw-semibold" th:text="${#numbers.formatInteger(totalAmount,1,'COMMA')} + '円'">0円</span>
 			</div>
 
-			<div class="text-end mt-4">
+			<!-- 修正（HTML）：購入手続きはログイン時だけ -->
+			<div class="text-end mt-4" th:unless="${isGuest}">
 				<a th:href="@{/orders/confirm}" class="btn btn-dark px-5">
 					購入手続きへ
+				</a>
+			</div>
+
+			<div class="text-end mt-4" th:if="${isGuest}">
+				<a th:href="@{/login}" class="btn btn-outline-dark px-5">
+					購入するにはログイン
 				</a>
 			</div>
 

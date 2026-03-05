@@ -28,9 +28,11 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler {
 	private final CartService cartService;
 	private final FavoriteService favoriteService;
 
-	public LoginSuccessHandler(UserRepository userRepository,
+	public LoginSuccessHandler(
+			UserRepository userRepository,
 			CartService cartService,
 			FavoriteService favoriteService) {
+
 		this.userRepository = userRepository;
 		this.cartService = cartService;
 		this.favoriteService = favoriteService;
@@ -42,28 +44,49 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler {
 			HttpServletResponse response,
 			Authentication authentication) throws IOException, ServletException {
 
-		HttpSession session = request.getSession(false);
+		// 修正（Java）：authentication/emailが取れないなら通常遷移
+		if (authentication == null || authentication.getName() == null) {
+			response.sendRedirect("/mypage");
+			return;
+		}
 
-		// 修正（Java）：username = email
-		String email = (authentication != null) ? authentication.getName() : null;
+		String email = authentication.getName();
 
-		// 修正（Java）：Integerで取得
 		Integer userId = userRepository.findByEmail(email)
 				.map(User::getId)
 				.orElse(null);
 
-		if (session != null && userId != null) {
-			SessionCart sessionCart = (SessionCart) session.getAttribute(SESSION_CART_KEY);
+		if (userId == null) {
+			response.sendRedirect("/mypage");
+			return;
+		}
 
-			SessionFavorites sessionFavorites = (SessionFavorites) session.getAttribute(SESSION_FAVORITES_KEY);
+		// 修正（Java）：migrateSession後の新セッションを確実に掴む
+		HttpSession session = request.getSession();
 
-			cartService.mergeSessionCartToUser(userId, sessionCart); // 修正（Java）
-			favoriteService.mergeSessionFavorites(userId, sessionFavorites); // 修正（Java）
+		// 修正（Java）：型安全に取得（ClassCastException回避）
+		Object cartObj = session.getAttribute(SESSION_CART_KEY);
+		SessionCart sessionCart = (cartObj instanceof SessionCart) ? (SessionCart) cartObj : null;
 
-			session.removeAttribute(SESSION_CART_KEY);
-			session.removeAttribute(SESSION_FAVORITES_KEY);
+		Object favObj = session.getAttribute(SESSION_FAVORITES_KEY);
+		SessionFavorites sessionFavorites = (favObj instanceof SessionFavorites) ? (SessionFavorites) favObj : null;
+
+		// 修正（Java）：存在する時だけマージ
+		if (sessionCart != null) {
+			cartService.mergeSessionCartToUser(userId, sessionCart);
+			session.removeAttribute(SESSION_CART_KEY); // 修正（Java）：二重加算防止
+		}
+
+		if (sessionFavorites != null) {
+			favoriteService.mergeSessionFavorites(userId, sessionFavorites);
+			session.removeAttribute(SESSION_FAVORITES_KEY); // 修正（Java）：二重登録防止
 		}
 
 		response.sendRedirect("/mypage");
+
+		// 修正（Java）：デバッグ（確認できたら消してOK）
+		System.out.println("LOGIN success sessionId = " + session.getId());
+		System.out.println("LOGIN success SESSION_CART attr = " + session.getAttribute("SESSION_CART"));
+		System.out.println("LOGIN success SESSION_FAVORITES attr = " + session.getAttribute("SESSION_FAVORITES"));
 	}
 }
