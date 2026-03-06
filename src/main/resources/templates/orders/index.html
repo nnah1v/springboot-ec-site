@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html xmlns:th="https://www.thymeleaf.org">
+
+<head>
+	<div th:replace="~{fragment :: meta}"></div>
+	<div th:replace="~{fragment :: styles}"></div>
+	<title>Orders</title>
+</head>
+
+<body>
+
+	<div th:replace="~{fragment :: header}"></div>
+
+	<main class="container py-5" style="max-width:1000px;">
+
+		<h1 class="fw-light mb-5 border-bottom pb-3">Orders</h1>
+
+		<!-- 修正（HTML）：注文が無い場合 -->
+		<div th:if="${orderList.isEmpty()}" class="text-muted">
+			注文履歴はまだありません。
+		</div>
+
+		<!-- 修正（HTML）：注文一覧 -->
+		<div th:each="order : ${orderList}" class="card mb-4">
+
+			<div class="card-body">
+
+				<!-- 修正（HTML）：注文ヘッダー -->
+				<div class="d-flex justify-content-between align-items-start mb-3">
+
+					<div>
+						<div class="fw-bold fs-5">
+							ご注文ID
+							<span th:text="${order.getId()}"></span>
+
+							<!-- 修正（HTML）：決済日paidAtではなく注文日createdAtを表示 -->
+							<span class="text-muted small ms-3"
+								th:if="${order.getCreatedAt() != null}"
+								th:text="${#temporals.format(order.getCreatedAt(), 'yyyy/MM/dd')}">
+							</span>
+						</div>
+					</div>
+
+					<div class="text-muted small">
+						注文状況：
+						<span th:if="${order.getStatus() == 'PAID'}">完了</span>
+						<span th:unless="${order.getStatus() == 'PAID'}" th:text="${order.getStatus()}"></span>
+					</div>
+
+				</div>
+
+				<hr>
+
+				<!-- 修正（HTML）：注文商品一覧 -->
+				<div th:each="item : ${order.getOrderItems()}" class="row align-items-center mb-3">
+
+					<!-- 修正（HTML）：商品画像はNOIMAGE固定 -->
+					<div class="col-md-2">
+						<img class="img-fluid" th:src="@{/images/noImage.png}" alt="NO IMAGE">
+					</div>
+
+					<!-- 修正（HTML）：商品名 -->
+					<div class="col-md-7">
+						<div th:text="${item.getProduct().getName()}"></div>
+					</div>
+
+					<!-- 修正（HTML）：数量 -->
+					<div class="col-md-3 text-end">
+						数量：
+						<span th:text="${item.getQuantity()}"></span>
+					</div>
+
+				</div>
+
+				<hr>
+
+				<!-- 修正（HTML）：金額 -->
+				<div class="row">
+
+					<div class="col-md-4">
+						<div class="text-muted small">小計</div>
+						<div th:text="${#numbers.formatInteger(order.getSubtotal(), 1, 'COMMA')} + '円'"></div>
+					</div>
+
+					<div class="col-md-4">
+						<div class="text-muted small">割引</div>
+						<div th:text="${#numbers.formatInteger(order.getDiscount(), 1, 'COMMA')} + '円'"></div>
+					</div>
+
+					<div class="col-md-4">
+						<div class="text-muted small">合計</div>
+						<strong th:text="${#numbers.formatInteger(order.getTotal(), 1, 'COMMA')} + '円'"></strong>
+					</div>
+
+				</div>
+
+			</div>
+
+		</div>
+
+	</main>
+
+	<div th:replace="~{fragment :: footer}"></div>
+	<div th:replace="~{fragment :: scripts}"></div>
+
+</body>
+
+</html>

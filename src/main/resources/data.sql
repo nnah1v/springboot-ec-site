@@ -7,8 +7,8 @@
 -- categories：先に投入（FKの親）
 -- -------------------------
 INSERT IGNORE INTO categories (name, sort_order) VALUES
-('ソファ', 1),
-('チェア・椅子', 2),
+('アート・雑貨', 1),
+('ソファ・椅子', 2),
 ('収納家具', 3),
 ('キッチン収納・食器棚', 4),
 ('ごみ箱・玄関小物', 5),
@@ -27,7 +27,6 @@ INSERT IGNORE INTO categories (name, sort_order) VALUES
 DELETE FROM favorites WHERE product_id >= 6;
 DELETE FROM cart_items WHERE product_id >= 6;
 DELETE FROM product_inventory_logs WHERE product_id >= 6;
-DELETE FROM products WHERE id >= 6;
 
 -- -------------------------
 -- products：初期商品（1-5）
@@ -36,7 +35,7 @@ DELETE FROM products WHERE id >= 6;
 INSERT INTO products (id, name, price, description, category, category_id, image_name, is_active)
 SELECT v.id, v.name, v.price, v.description, v.category, c.id, v.image_name, v.is_active
 FROM (
-	SELECT 1 AS id, 'ウッドフレーム（A4）' AS name, 2980 AS price, '天然木のA4フレーム。' AS description, 'アート' AS category, 'frame_a4.jpg' AS image_name, 1 AS is_active
+	SELECT 1 AS id, 'ウッドフレーム（A4）' AS name, 2980 AS price, '天然木のA4フレーム。' AS description, 'アート・雑貨' AS category, 'frame_a4.jpg' AS image_name, 1 AS is_active
 	UNION ALL SELECT 2, 'ガラス花瓶（S）', 1980, '小さめの透明ガラス花瓶。', '花器・プランター・グリーン', 'vase_s.jpg', 1
 	UNION ALL SELECT 3, 'テーブルランプ（LED）', 7980, '暖色LEDのテーブルランプ。', 'ライト・照明', 'lamp_led.jpg', 1
 	UNION ALL SELECT 4, 'ラタン収納バスケット', 4980, 'ラタン素材の収納バスケット。', '収納家具', 'basket_rattan.jpg', 1
@@ -59,10 +58,10 @@ ON DUPLICATE KEY UPDATE
 INSERT INTO products (id, name, price, description, category, category_id, image_name, is_active)
 SELECT v.id, v.name, v.price, v.description, v.category, c.id, v.image_name, v.is_active
 FROM (
-	SELECT 6 AS id,  '北欧風 2人掛けソファ（ファブリック）' AS name, 19800 AS price, 'リビングの主役になる2人掛けソファ。' AS description, 'ソファ' AS category, 'noimage.png' AS image_name, 1 AS is_active
-	UNION ALL SELECT 7,  'カウチソファ（ライトグレー）', 17900, '省スペースでも置けるカウチタイプ。', 'ソファ', 'noimage.png', 1
-	UNION ALL SELECT 8,  'ダイニングチェア（オーク）', 12800, '木目がきれいな定番チェア。', 'チェア・椅子', 'noimage.png', 1
-	UNION ALL SELECT 9,  'スタッキングスツール（ナチュラル）', 5900, '重ねて収納できるスツール。', 'チェア・椅子', 'noimage.png', 1
+	SELECT 6 AS id,  '北欧風 2人掛けソファ（ファブリック）' AS name, 19800 AS price, 'リビングの主役になる2人掛けソファ。' AS description, 'ソファ・椅子' AS category, 'noimage.png' AS image_name, 1 AS is_active
+	UNION ALL SELECT 7,  'カウチソファ（ライトグレー）', 17900, '省スペースでも置けるカウチタイプ。', 'ソファ・椅子', 'noimage.png', 1
+	UNION ALL SELECT 8,  'ダイニングチェア（オーク）', 12800, '木目がきれいな定番チェア。', 'ソファ・椅子', 'noimage.png', 1
+	UNION ALL SELECT 9,  'スタッキングスツール（ナチュラル）', 5900, '重ねて収納できるスツール。', 'ソファ・椅子', 'noimage.png', 1
 	UNION ALL SELECT 10, 'チェスト（3段）', 14900, '小物をすっきり整理できる3段チェスト。', '収納家具', 'noimage.png', 1
 	UNION ALL SELECT 11, 'オープンシェルフ（5段）', 13900, '見せる収納に便利なオープン棚。', '収納家具', 'noimage.png', 1
 	UNION ALL SELECT 12, 'サイドボード（幅90cm）', 18900, 'リビングの収納にちょうどいい。', '収納家具', 'noimage.png', 1

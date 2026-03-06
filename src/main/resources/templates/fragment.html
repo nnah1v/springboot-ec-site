@@ -41,18 +41,46 @@
 		</header>
 
 		<nav class="ec-iconbar" aria-label="primary">
+
+			<!-- 修正（HTML）：検索バー本体はnav直下 -->
+			<div id="searchOverlay" class="ec-search-overlay">
+				<div class="ec-search-panel">
+					<form th:action="@{/products}" method="get" class="ec-search-form">
+						<div class="ec-search-input-wrap">
+							<i class="bi bi-search ec-search-input-icon" aria-hidden="true"></i>
+							<input type="text" id="searchKeyword" name="keyword" class="ec-search-input"
+								placeholder="商品名・カテゴリで検索">
+							<button type="submit" class="ec-search-submit-button">検索</button>
+						</div>
+					</form>
+				</div>
+			</div>
+
 			<div class="container-fluid px-0">
 				<div class="ec-iconbar-grid">
 
-					<a class="ec-icon-item" th:href="@{/search}">
+					<!-- 修正（HTML）：検索ボタンはgridの中 -->
+					<button type="button" id="searchToggleButton" class="ec-icon-item ec-icon-button">
 						<i class="bi bi-search ec-icon" aria-hidden="true"></i>
 						<span class="ec-icon-label">検索</span>
-					</a>
+					</button>
 
-					<a class="ec-icon-item" th:href="@{/categories}">
-						<i class="bi bi-grid ec-icon" aria-hidden="true"></i>
-						<span class="ec-icon-label">カテゴリー</span>
-					</a>
+					<!-- 修正（HTML）：カテゴリはDBからループ表示 -->
+					<div class="dropdown">
+						<button class="ec-icon-item ec-icon-button dropdown-toggle" type="button"
+							data-bs-toggle="dropdown" aria-expanded="false">
+							<i class="bi bi-grid ec-icon" aria-hidden="true"></i>
+							<span class="ec-icon-label">カテゴリー</span>
+						</button>
+
+						<ul class="dropdown-menu dropdown-menu-end ec-dropdown">
+							<li th:each="category : ${categories}">
+								<a class="dropdown-item ec-dropdown-item"
+									th:href="@{/products(categoryId=${category.getId()})}"
+									th:text="${category.getName()}">カテゴリ名</a>
+							</li>
+						</ul>
+					</div>
 
 					<a class="ec-icon-item" th:href="@{/cart}">
 						<i class="bi bi-cart3 ec-icon" aria-hidden="true"></i>
@@ -64,7 +92,6 @@
 						<span class="ec-icon-label">閲覧履歴</span>
 					</a>
 
-					<!-- メニュー -->
 					<div class="dropdown">
 						<button class="ec-icon-item ec-icon-button dropdown-toggle" type="button"
 							data-bs-toggle="dropdown" aria-expanded="false">
@@ -73,7 +100,6 @@
 						</button>
 
 						<ul class="dropdown-menu dropdown-menu-end ec-dropdown">
-							<!-- 未ログイン -->
 							<li sec:authorize="isAnonymous()">
 								<a class="dropdown-item ec-dropdown-item" th:href="@{/login}">ログイン</a>
 							</li>
@@ -81,7 +107,6 @@
 								<a class="dropdown-item ec-dropdown-item" th:href="@{/signup}">会員登録</a>
 							</li>
 
-							<!-- ログイン中 -->
 							<li sec:authorize="isAuthenticated()">
 								<a class="dropdown-item ec-dropdown-item" th:href="@{/orders}">注文履歴</a>
 							</li>

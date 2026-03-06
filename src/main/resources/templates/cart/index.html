@@ -4,7 +4,7 @@
 <head>
 	<div th:replace="~{fragment :: meta}"></div>
 	<div th:replace="~{fragment :: styles}"></div>
-	<title>カート | SÖLA</title>
+	<title>Shopping Cart | SÖLA</title>
 </head>
 
 <body class="bg-white text-dark">
@@ -22,7 +22,6 @@
 
 		<div th:unless="${#lists.isEmpty(cartLines)}">
 
-			<!-- 修正（HTML）：ゲスト/ログインで行の参照先が違うので分岐 -->
 			<table class="table align-middle">
 				<thead class="border-bottom">
 					<tr class="text-muted small">
@@ -78,27 +77,52 @@
 							</form>
 						</td>
 					</tr>
-
 				</tbody>
 			</table>
 
-			<!-- 修正（HTML）：合計は共通（Controllerで必ずセット） -->
-			<div class="text-end fs-5 mt-4 border-top pt-4">
-				<span class="text-muted me-2">合計</span>
-				<span class="fw-semibold" th:text="${#numbers.formatInteger(totalAmount,1,'COMMA')} + '円'">0円</span>
-			</div>
+			<!-- 修正（HTML）：白黒で整えた金額サマリー -->
+			<div class="d-flex justify-content-end mt-5 border-top pt-4">
+				<div style="width:100%; max-width:360px;">
 
-			<!-- 修正（HTML）：購入手続きはログイン時だけ -->
-			<div class="text-end mt-4" th:unless="${isGuest}">
-				<a th:href="@{/orders/confirm}" class="btn btn-dark px-5">
-					購入手続きへ
-				</a>
-			</div>
+					<div class="d-flex justify-content-between align-items-center mb-2">
+						<span class="text-muted">小計</span>
+						<span th:text="${#numbers.formatInteger(totalAmount,1,'COMMA')} + '円'">0円</span>
+					</div>
 
-			<div class="text-end mt-4" th:if="${isGuest}">
-				<a th:href="@{/login}" class="btn btn-outline-dark px-5">
-					購入するにはログイン
-				</a>
+					<div class="d-flex justify-content-between align-items-center mb-2" th:if="${discountAmount > 0}">
+						<span class="text-muted">割引</span>
+						<span th:text="'- ' + ${#numbers.formatInteger(discountAmount,1,'COMMA')} + '円'">- 0円</span>
+					</div>
+
+					<div class="text-end text-muted small mb-3" th:if="${discountAmount > 0}">
+						割引が適用されています
+					</div>
+
+					<hr class="my-3">
+
+					<div class="d-flex justify-content-between align-items-center mb-4">
+						<span class="fs-4">合計</span>
+						<strong class="fs-2"
+							th:text="${#numbers.formatInteger(finalAmount,1,'COMMA')} + '円'">0円</strong>
+					</div>
+
+					<!-- 修正（HTML）：購入手続きはログイン時だけ -->
+					<div th:unless="${isGuest}">
+						<form th:action="@{/orders}" method="post">
+							<input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+							<button type="submit" class="btn btn-dark w-100 py-3">
+								注文する
+							</button>
+						</form>
+					</div>
+
+					<div th:if="${isGuest}">
+						<a th:href="@{/login}" class="btn btn-outline-dark w-100 py-3">
+							購入するにはログイン
+						</a>
+					</div>
+
+				</div>
 			</div>
 
 		</div>

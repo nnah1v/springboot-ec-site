@@ -29,35 +29,31 @@
 			<img class="ec-hero-img" th:src="@{/images/noimage.png}" alt="No Image">
 		</section>
 
+
+
 		<section class="ec-category-grid">
 			<h2 class="ec-category-heading">SHOP BY CATEGORY</h2>
 			<p class="ec-category-sub">カテゴリーから探す</p>
 
 			<div class="ec-category-list">
 
-				
-				<!-- 修正（HTML）：DBカテゴリを回して、名前でSVGを出し分け -->
+				<!-- 修正（HTML）：categoryIdに統一 -->
 				<a class="ec-category-item" th:each="categoryItem : ${categories}"
-					th:href="@{/products(category=${categoryItem.id}, sort=${sort})}"
+					th:href="@{/products(categoryId=${categoryItem.id}, sort=${sort}, keyword=${keyword})}"
 					th:classappend="${selectedCategoryId != null && selectedCategoryId == categoryItem.id} ? ' is-active' : ''">
 
-					<!-- 修正（HTML）：カテゴリ名で元SVGを割り当て -->
 					<th:block th:switch="${categoryItem.name}">
 
-						<!-- ソファ -->
-						<svg th:case="'ソファ'" class="ec-category-logo" viewBox="0 0 24 24" aria-hidden="true">
-							<path d="M5.5 12h13" fill="none" stroke="currentColor" stroke-width="2.0"
-								stroke-linecap="round" />
-							<path d="M6.5 12v-2.2c0-1.4 1.1-2.6 2.6-2.6h5.8c1.4 0 2.6 1.1 2.6 2.6V12" fill="none"
-								stroke="currentColor" stroke-width="2.0" stroke-linejoin="round" />
-							<path d="M5.5 12v4.5M18.5 12v4.5" fill="none" stroke="currentColor" stroke-width="2.0"
-								stroke-linecap="round" />
-							<path d="M8 16.5h8" fill="none" stroke="currentColor" stroke-width="2.0"
-								stroke-linecap="round" />
+						<svg th:case="'アート・雑貨'" class="ec-category-logo" viewBox="0 0 24 24" aria-hidden="true">
+							<rect x="5" y="6" width="14" height="14" rx="1.6" fill="none" stroke="currentColor"
+								stroke-width="1.8" stroke-linejoin="round" />
+							<rect x="7.5" y="8.5" width="9" height="9" rx="1.0" fill="none" stroke="currentColor"
+								stroke-width="1.4" stroke-linejoin="round" />
+							<path d="M10 6V4.8h4V6" fill="none" stroke="currentColor" stroke-width="1.6"
+								stroke-linecap="round" stroke-linejoin="round" />
 						</svg>
 
-						<!-- チェア・椅子 -->
-						<svg th:case="'チェア・椅子'" class="ec-category-logo" viewBox="0 0 24 24" aria-hidden="true">
+						<svg th:case="'ソファ・椅子'" class="ec-category-logo" viewBox="0 0 24 24" aria-hidden="true">
 							<path d="M8 9h8c1.1 0 2 .9 2 2v3H6v-3c0-1.1.9-2 2-2z" fill="none" stroke="currentColor"
 								stroke-width="1.6" stroke-linejoin="round" />
 							<path d="M7 14v6M17 14v6" fill="none" stroke="currentColor" stroke-width="1.6"
@@ -68,7 +64,6 @@
 								stroke-width="1.6" stroke-linecap="round" />
 						</svg>
 
-						<!-- 収納家具 -->
 						<svg th:case="'収納家具'" class="ec-category-logo" viewBox="0 0 24 24" aria-hidden="true"
 							focusable="false">
 							<rect x="6" y="6" width="12" height="14" fill="none" stroke="currentColor"
@@ -85,7 +80,6 @@
 								stroke-linecap="round" />
 						</svg>
 
-						<!-- キッチン収納・食器棚 -->
 						<svg th:case="'キッチン収納・食器棚'" class="ec-category-logo" viewBox="0 0 24 24" aria-hidden="true"
 							focusable="false">
 							<rect x="5.5" y="7" width="13" height="10" rx="1.6" fill="none" stroke="currentColor"
@@ -98,7 +92,6 @@
 								stroke-linecap="round" />
 						</svg>
 
-						<!-- ごみ箱・玄関小物 -->
 						<svg th:case="'ごみ箱・玄関小物'" class="ec-category-logo" viewBox="0 0 24 24" aria-hidden="true">
 							<path d="M8 7h8" fill="none" stroke="currentColor" stroke-width="1.6"
 								stroke-linecap="round" />
@@ -110,7 +103,6 @@
 								stroke-linecap="round" />
 						</svg>
 
-						<!-- ライト・照明 -->
 						<svg th:case="'ライト・照明'" class="ec-category-logo" viewBox="0 0 24 24" aria-hidden="true">
 							<path d="M12 3a7 7 0 0 0-4 12c.7.6 1 1.4 1 2v1h6v-1c0-.6.3-1.4 1-2a7 7 0 0 0-4-12z"
 								fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" />
@@ -118,7 +110,6 @@
 								stroke-linecap="round" />
 						</svg>
 
-						<!-- ラグ・カーペット -->
 						<svg th:case="'ラグ・カーペット'" class="ec-category-logo" viewBox="0 0 24 24" aria-hidden="true"
 							focusable="false">
 							<rect x="7" y="6.5" width="10" height="11" fill="none" stroke="currentColor"
@@ -133,21 +124,18 @@
 								stroke-linejoin="round" />
 						</svg>
 
-						<!-- クッション -->
 						<svg th:case="'クッション'" class="ec-category-logo" viewBox="0 0 24 24" aria-hidden="true"
 							focusable="false">
 							<rect x="6" y="7" width="12" height="10" rx="2.5" ry="2.5" fill="none" stroke="currentColor"
 								stroke-width="1.6" stroke-linejoin="round" />
 						</svg>
 
-						<!-- 時計 -->
 						<svg th:case="'時計'" class="ec-category-logo" viewBox="0 0 24 24" aria-hidden="true">
 							<circle cx="12" cy="12" r="8.8" fill="none" stroke="currentColor" stroke-width="2.0" />
 							<path d="M12 7.8v4.8l3.4 1.8" fill="none" stroke="currentColor" stroke-width="2.0"
 								stroke-linecap="round" stroke-linejoin="round" />
 						</svg>
 
-						<!-- 花器・プランター・グリーン -->
 						<svg th:case="'花器・プランター・グリーン'" class="ec-category-logo" viewBox="0 0 24 24" aria-hidden="true">
 							<path d="M12 7c2 0 3-2 3-3-2 0-3 1-3 3z" fill="none" stroke="currentColor"
 								stroke-width="1.6" stroke-linejoin="round" />
@@ -159,7 +147,6 @@
 								stroke-linejoin="round" />
 						</svg>
 
-						<!-- キッチン家電・キッチン用品 -->
 						<svg th:case="'キッチン家電・キッチン用品'" class="ec-category-logo" viewBox="0 0 24 24" aria-hidden="true"
 							focusable="false">
 							<rect x="6.5" y="5.5" width="3" height="8" rx="1" fill="none" stroke="currentColor"
@@ -180,7 +167,6 @@
 								fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" />
 						</svg>
 
-						<!-- デザイン家電・オーディオ -->
 						<svg th:case="'デザイン家電・オーディオ'" class="ec-category-logo" viewBox="0 0 24 24" aria-hidden="true">
 							<path d="M8 4h8v16H8z" fill="none" stroke="currentColor" stroke-width="1.6"
 								stroke-linejoin="round" />
@@ -192,7 +178,6 @@
 								stroke-linecap="round" />
 						</svg>
 
-						<!-- 修正（HTML）：想定外カテゴリ用（共通アイコン） -->
 						<svg th:case="*" class="ec-category-logo" viewBox="0 0 24 24" aria-hidden="true">
 							<rect x="6" y="6" width="12" height="12" fill="none" stroke="currentColor"
 								stroke-width="1.6" stroke-linejoin="round" />
@@ -209,23 +194,26 @@
 		<section class="ec-sort mb-4">
 			<span class="ec-sort-label">並び替え</span>
 
-			<!-- 修正（HTML）：category引き継ぎ -->
-			<a class="ec-sort-link" th:href="@{/products(sort='popular', category=${selectedCategoryId})}"
+			<a class="ec-sort-link"
+				th:href="@{/products(sort='popular', categoryId=${selectedCategoryId}, keyword=${keyword})}"
 				th:classappend="${sort == 'popular'} ? ' is-active'">
 				人気順
 			</a>
 
-			<a class="ec-sort-link" th:href="@{/products(sort='price_asc', category=${selectedCategoryId})}"
+			<a class="ec-sort-link"
+				th:href="@{/products(sort='price_asc', categoryId=${selectedCategoryId}, keyword=${keyword})}"
 				th:classappend="${sort == 'price_asc'} ? ' is-active'">
 				価格が安い順
 			</a>
 
-			<a class="ec-sort-link" th:href="@{/products(sort='price_desc', category=${selectedCategoryId})}"
+			<a class="ec-sort-link"
+				th:href="@{/products(sort='price_desc', categoryId=${selectedCategoryId}, keyword=${keyword})}"
 				th:classappend="${sort == 'price_desc'} ? ' is-active'">
 				価格が高い順
 			</a>
 
-			<a class="ec-sort-link" th:href="@{/products(sort='new', category=${selectedCategoryId})}"
+			<a class="ec-sort-link"
+				th:href="@{/products(sort='new', categoryId=${selectedCategoryId}, keyword=${keyword})}"
 				th:classappend="${sort == 'new'} ? ' is-active'">
 				新着順
 			</a>
@@ -303,28 +291,24 @@
 				</div>
 
 				<nav class="ec-pagination" aria-label="pagination" th:if="${productPage.totalPages > 1}">
-					<!-- 修正（HTML）：category引き継ぎ -->
 					<a class="ec-page" th:classappend="${!productPage.hasPrevious()} ? ' is-disabled' : ''"
-						th:href="${productPage.hasPrevious()} ? @{/products(page=${productPage.number - 1}, size=${productPage.size}, sort=${sort}, category=${selectedCategoryId})} : '#'"
+						th:href="${productPage.hasPrevious()} ? @{/products(page=${productPage.number - 1}, size=${productPage.size}, sort=${sort}, categoryId=${selectedCategoryId}, keyword=${keyword})} : '#'"
 						aria-disabled="true">前へ</a>
-
 					<span class="ec-page is-active" th:text="${productPage.number + 1}">1</span>
 
 					<span class="ec-page ec-page-total" th:text="'/ ' + ${productPage.totalPages}">/ 1</span>
-
 					<a class="ec-page" th:classappend="${!productPage.hasNext()} ? ' is-disabled' : ''"
-						th:href="${productPage.hasNext()} ? @{/products(page=${productPage.number + 1}, size=${productPage.size}, sort=${sort}, category=${selectedCategoryId})} : '#'"
+						th:href="${productPage.hasNext()} ? @{/products(page=${productPage.number + 1}, size=${productPage.size}, sort=${sort}, categoryId=${selectedCategoryId}, keyword=${keyword})} : '#'"
 						aria-disabled="true">次へ</a>
 				</nav>
 
 				<div class="ec-size small">
 					<span class="ec-size-label">表示件数</span>
 
-					<!-- 修正（HTML）：category引き継ぎ -->
 					<a class="ec-size-link" th:classappend="${productPage.size == 20} ? ' is-active' : ''"
-						th:href="@{/products(size=20, page=0, sort=${sort}, category=${selectedCategoryId})}">20</a>
+						th:href="@{/products(size=20, page=0, sort=${sort}, categoryId=${selectedCategoryId}, keyword=${keyword})}">20</a>
 					<a class="ec-size-link" th:classappend="${productPage.size == 50} ? ' is-active' : ''"
-						th:href="@{/products(size=50, page=0, sort=${sort}, category=${selectedCategoryId})}">50</a>
+						th:href="@{/products(size=50, page=0, sort=${sort}, categoryId=${selectedCategoryId}, keyword=${keyword})}">50</a>
 				</div>
 
 			</div>

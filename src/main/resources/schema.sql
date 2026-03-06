@@ -140,22 +140,23 @@ CREATE TABLE IF NOT EXISTS reviews (
 );
 
 -- -------------------------
--- discount_rules（単独）
+-- discount_rules（金額条件）
 -- -------------------------
 CREATE TABLE IF NOT EXISTS discount_rules (
   id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
   rule_type VARCHAR(50) NOT NULL,
-  min_qty INT NOT NULL,
+  min_amount INT NOT NULL,          
   percent_off INT NOT NULL,
   is_active TINYINT(1) NOT NULL DEFAULT 1,
   created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
   updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
 
--- 初期データ（重複対策）
-INSERT IGNORE INTO discount_rules (id, rule_type, min_qty, percent_off, is_active)
-VALUES (1, 'CART_QTY_GTE_PERCENT_OFF', 3, 10, 1);
-
+-- 初期データ
+INSERT IGNORE INTO discount_rules
+(id, rule_type, min_amount, percent_off, is_active)
+VALUES
+(1, 'CART_AMOUNT_GTE_PERCENT_OFF', 20000, 10, 1);
 -- -------------------------
 -- favorites（users/productsの子）
 -- -------------------------

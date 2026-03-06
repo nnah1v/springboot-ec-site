@@ -27,13 +27,20 @@ public class SecurityConfig {
 	public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
 
 		httpSecurity
+				// 修正（Java）：Stripe WebhookはCSRF除外
+				.csrf(csrf -> csrf
+						.ignoringRequestMatchers("/stripe/webhook"))
+
 				.authorizeHttpRequests(authorize -> authorize
 						.requestMatchers("/css/**", "/images/**", "/js/**").permitAll()
 						.requestMatchers("/admin/**").hasRole("ADMIN")
 
+						// 修正（Java）：Stripe Webhookは外部POSTなので許可
+						.requestMatchers("/stripe/webhook").permitAll()
+
 						// 修正（Java）：ゲストでも閲覧・操作できる範囲
 						.requestMatchers("/", "/login", "/signup/**", "/products", "/products/**").permitAll()
-						.requestMatchers("/cart/**", "/favorites/**").permitAll() // 修正（Java）
+						.requestMatchers("/cart/**", "/favorites/**").permitAll()
 
 						// 修正（Java）：ログイン必須
 						.requestMatchers("/mypage/**", "/orders/**").authenticated()
@@ -45,8 +52,8 @@ public class SecurityConfig {
 						.usernameParameter("email")
 						.passwordParameter("password")
 
-						// 修正（Java）：ログイン成功時にマージしてから遷移（defaultSuccessUrlは使わない）
-						.successHandler(loginSuccessHandler) // 修正（Java）
+						// 修正（Java）：ログイン成功時にマージしてから遷移
+						.successHandler(loginSuccessHandler)
 
 						.failureUrl("/login?error")
 						.permitAll())
@@ -54,9 +61,11 @@ public class SecurityConfig {
 				.logout(logout -> logout
 						.logoutSuccessUrl("/products")
 						.permitAll())
-				// 修正（Java）：IDは変えるが属性は保持（まずこれで復旧）
+
+				// 修正（Java）：IDは変えるが属性は保持
 				.sessionManagement(session -> session
 						.sessionFixation(sessionFixation -> sessionFixation.changeSessionId()));
+
 		return httpSecurity.build();
 	}
 }

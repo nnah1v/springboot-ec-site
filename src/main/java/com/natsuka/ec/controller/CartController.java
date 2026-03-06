@@ -49,12 +49,14 @@ public class CartController {
 			model.addAttribute("cartLines", cartLines);
 			model.addAttribute("isGuest", true);
 
-			// 修正（Java）：合計（ゲスト）
-			int totalAmount = 0;
-			for (CartLineView line : cartLines) {
-				totalAmount += line.getLineTotal();
-			}
+			// 修正（Java）：ゲストの小計・割引・合計を設定
+			int totalAmount = cartService.calculateSessionTotalAmount(sessionCart);
+			int discountAmount = cartService.calculateSessionDiscountAmount(sessionCart);
+			int finalAmount = cartService.calculateSessionFinalAmount(sessionCart);
+
 			model.addAttribute("totalAmount", totalAmount);
+			model.addAttribute("discountAmount", discountAmount);
+			model.addAttribute("finalAmount", finalAmount);
 
 			return "cart/index";
 		}
@@ -63,8 +65,14 @@ public class CartController {
 		model.addAttribute("cartLines", cartService.findCartItems(userId));
 		model.addAttribute("isGuest", false);
 
-		// 修正（Java）：合計（ログイン）
-		model.addAttribute("totalAmount", cartService.calculateTotalAmount(userId));
+		// 修正（Java）：ログイン時の小計・割引・合計を設定
+		int totalAmount = cartService.calculateTotalAmount(userId);
+		int discountAmount = cartService.calculateDiscountAmount(userId);
+		int finalAmount = cartService.calculateFinalAmount(userId);
+
+		model.addAttribute("totalAmount", totalAmount);
+		model.addAttribute("discountAmount", discountAmount);
+		model.addAttribute("finalAmount", finalAmount);
 
 		return "cart/index";
 	}
@@ -80,8 +88,6 @@ public class CartController {
 		if (userId == null) {
 			SessionCart sessionCart = getOrCreateSessionCart(session);
 			cartService.addToSessionCart(sessionCart, productId, quantity);
-
-			
 			return "redirect:/cart";
 		}
 

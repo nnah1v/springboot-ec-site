@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.natsuka.ec.dto.SessionFavorites;
+import com.natsuka.ec.dto.SessionHistory; // 修正（Java）
 import com.natsuka.ec.entity.Category;
 import com.natsuka.ec.entity.Product;
 import com.natsuka.ec.repository.UserRepository;
@@ -30,14 +31,18 @@ import com.natsuka.ec.service.ProductService;
 public class ProductController {
 
 	private static final String SESSION_FAVORITES_KEY = "SESSION_FAVORITES";
+	private static final String SESSION_HISTORY_KEY = "SESSION_HISTORY"; // 修正（Java）
 
 	private final ProductService productService;
 	private final FavoriteService favoriteService;
 	private final UserRepository userRepository;
 	private final CategoryService categoryService;
 
-	public ProductController(ProductService productService, FavoriteService favoriteService,
-			UserRepository userRepository, CategoryService categoryService) {
+	public ProductController(
+			ProductService productService,
+			FavoriteService favoriteService,
+			UserRepository userRepository,
+			CategoryService categoryService) {
 		this.productService = productService;
 		this.favoriteService = favoriteService;
 		this.userRepository = userRepository;
@@ -46,25 +51,28 @@ public class ProductController {
 
 	@GetMapping({ "/", "/products" })
 	public String index(
-			@RequestParam(required = false) Integer category, // 修正（Java）
+			@RequestParam(required = false) Integer categoryId, // 修正（Java）：category → categoryId
+			@RequestParam(required = false) String keyword, // 修正（Java）：検索用
 			@RequestParam(name = "sort", defaultValue = "new") String sort,
 			@PageableDefault(size = 20) Pageable pageable,
 			Model model,
 			@AuthenticationPrincipal User loginUser,
 			HttpSession session) {
 
-		// カテゴリ一覧（SHOP BY CATEGORY用）
+		// 修正（Java）：カテゴリ一覧（SHOP BY CATEGORY用）
 		List<Category> categories = categoryService.findAllCategories();
 		model.addAttribute("categories", categories);
 
-		// 修正（Java）：categoryをServiceに渡す
-		Page<Product> productPage = productService.findActiveProducts(sort, pageable, category); // 修正（Java）
+		// 修正（Java）：一覧・検索・カテゴリ・並び替えを1本化
+		Page<Product> productPage = productService.searchProducts(keyword, sort, pageable, categoryId);
 
 		model.addAttribute("productPage", productPage);
 		model.addAttribute("sort", sort);
-		model.addAttribute("selectedCategoryId", category); // 修正（Java）：名前はそのままでも動くが実態はString
+		model.addAttribute("keyword", keyword); // 修正（Java）
+		model.addAttribute("selectedCategoryId", categoryId); // 修正（Java）
+		model.addAttribute("categories", categories);
 
-		// ログイン前も反映できるSetを渡す
+		// 修正（Java）：ログイン前後どちらでもお気に入り表示をそろえる
 		model.addAttribute("favoriteProductIdSet", resolveFavoriteProductIdSet(loginUser, session));
 
 		return "products/index";
@@ -77,21 +85,25 @@ public class ProductController {
 			@AuthenticationPrincipal User loginUser,
 			HttpSession session) {
 
-		Optional<Product> product = productService.findProductById(id);
+		Optional<Product> productOptional = productService.findProductById(id);
 
-		if (product.isEmpty()) {
-			return "redirect:/";
+		if (productOptional.isEmpty()) {
+			return "redirect:/products";
 		}
 
-		model.addAttribute("product", product.get());
+		Product product = productOptional.get();
+		model.addAttribute("product", product);
 
-		// 詳細でも同じSet
+		// 修正（Java）：詳細表示時に閲覧履歴へ追加
+		addProductToHistory(session, product.getId());
+
+		// 修正（Java）：詳細でも同じSet
 		model.addAttribute("favoriteProductIdSet", resolveFavoriteProductIdSet(loginUser, session));
 
 		return "products/show";
 	}
 
-	// ログイン中=DB / ログイン前=Session
+	// 修正（Java）：ログイン中=DB / ログイン前=Session
 	private Set<Integer> resolveFavoriteProductIdSet(User loginUser, HttpSession session) {
 
 		if (loginUser == null) {
@@ -105,7 +117,20 @@ public class ProductController {
 		String email = loginUser.getUsername();
 
 		return userRepository.findByEmail(email)
-				.map(dbUser -> favoriteService.findFavoriteProductIds(dbUser.getId()))
+				.map(databaseUser -> favoriteService.findFavoriteProductIds(databaseUser.getId()))
 				.orElse(Collections.emptySet());
+	}
+
+	// 修正（Java）：閲覧履歴をSessionへ保存
+	private void addProductToHistory(HttpSession session, Integer productId) {
+
+		SessionHistory sessionHistory = (SessionHistory) session.getAttribute(SESSION_HISTORY_KEY);
+
+		if (sessionHistory == null) {
+			sessionHistory = new SessionHistory();
+		}
+
+		sessionHistory.add(productId);
+		session.setAttribute(SESSION_HISTORY_KEY, sessionHistory);
 	}
 }

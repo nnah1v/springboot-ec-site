@@ -67,3 +67,42 @@ document.addEventListener("click", async (event) => {
 	icon.classList.toggle("bi-heart-fill", !isFilled);
 	icon.classList.toggle("bi-heart", isFilled);
 }, true);
+
+// 修正（JS）：検索バーを開閉する
+document.addEventListener("DOMContentLoaded", function() {
+
+	const searchToggleButton = document.getElementById("searchToggleButton");
+	const searchOverlay = document.getElementById("searchOverlay");
+	const searchKeyword = document.getElementById("searchKeyword");
+
+	if (!searchToggleButton || !searchOverlay) {
+		return;
+	}
+
+	searchToggleButton.addEventListener("click", function(event) {
+		event.stopPropagation();
+
+		searchOverlay.classList.toggle("is-open");
+
+		if (searchOverlay.classList.contains("is-open") && searchKeyword) {
+			setTimeout(function() {
+				searchKeyword.focus();
+			}, 150);
+		}
+	});
+
+	searchOverlay.addEventListener("click", function(event) {
+		event.stopPropagation();
+	});
+
+	document.addEventListener("click", function() {
+		searchOverlay.classList.remove("is-open");
+	});
+
+	document.addEventListener("keydown", function(event) {
+		if (event.key === "Escape") {
+			searchOverlay.classList.remove("is-open");
+		}
+	});
+
+});
