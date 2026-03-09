@@ -18,7 +18,7 @@ public class CurrentUserResolver {
 		this.userRepository = userRepository;
 	}
 
-	public Integer getCurrentUserIdOrNull() { // 修正（Java）
+	public Integer getCurrentUserIdOrNull() {
 
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 

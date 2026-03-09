@@ -12,10 +12,10 @@ import org.springframework.security.web.SecurityFilterChain;
 @EnableWebSecurity
 public class SecurityConfig {
 
-	private final LoginSuccessHandler loginSuccessHandler; // 修正（Java）
+	private final LoginSuccessHandler loginSuccessHandler; 
 
-	public SecurityConfig(LoginSuccessHandler loginSuccessHandler) { // 修正（Java）
-		this.loginSuccessHandler = loginSuccessHandler; // 修正（Java）
+	public SecurityConfig(LoginSuccessHandler loginSuccessHandler) {
+		this.loginSuccessHandler = loginSuccessHandler; 
 	}
 
 	@Bean
@@ -27,23 +27,30 @@ public class SecurityConfig {
 	public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
 
 		httpSecurity
-				// 修正（Java）：Stripe WebhookはCSRF除外
+				// Stripe WebhookはCSRF除外
 				.csrf(csrf -> csrf
 						.ignoringRequestMatchers("/stripe/webhook"))
 
 				.authorizeHttpRequests(authorize -> authorize
+						// 静的リソースは全員許可
 						.requestMatchers("/css/**", "/images/**", "/js/**").permitAll()
-						.requestMatchers("/admin/**").hasRole("ADMIN")
 
-						// 修正（Java）：Stripe Webhookは外部POSTなので許可
+						// 公開ページ
+						.requestMatchers("/", "/login", "/signup/**", "/products", "/products/**").permitAll()
+
+						// Stripe Webhookは外部POSTなので許可
 						.requestMatchers("/stripe/webhook").permitAll()
 
-						// 修正（Java）：ゲストでも閲覧・操作できる範囲
-						.requestMatchers("/", "/login", "/signup/**", "/products", "/products/**").permitAll()
-						.requestMatchers("/cart/**", "/favorites/**").permitAll()
+						// ゲストでも使える範囲
+						.requestMatchers("/cart/**", "/favorites/**", "/history/**").permitAll()
 
-						// 修正（Java）：ログイン必須
+						// 管理画面はADMINのみ
+						.requestMatchers("/admin/**").hasRole("ADMIN")
+
+						// ログイン必須ページ
 						.requestMatchers("/mypage/**", "/orders/**").authenticated()
+
+						// それ以外はログイン必須
 						.anyRequest().authenticated())
 
 				.formLogin(form -> form
@@ -52,7 +59,7 @@ public class SecurityConfig {
 						.usernameParameter("email")
 						.passwordParameter("password")
 
-						// 修正（Java）：ログイン成功時にマージしてから遷移
+						// ログイン成功時にマージしてから遷移
 						.successHandler(loginSuccessHandler)
 
 						.failureUrl("/login?error")
@@ -62,7 +69,7 @@ public class SecurityConfig {
 						.logoutSuccessUrl("/products")
 						.permitAll())
 
-				// 修正（Java）：IDは変えるが属性は保持
+				// IDは変えるが属性は保持
 				.sessionManagement(session -> session
 						.sessionFixation(sessionFixation -> sessionFixation.changeSessionId()));
 

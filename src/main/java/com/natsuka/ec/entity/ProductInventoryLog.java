@@ -36,4 +36,5 @@ public class ProductInventoryLog {
 
 	@Column(name = "created_at", nullable = false)
 	private LocalDateTime createdAt;
+
 }

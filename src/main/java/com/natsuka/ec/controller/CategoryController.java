@@ -22,20 +22,20 @@ public class CategoryController {
 		this.productService = productService;
 	}
 
-	// 修正（Java）：カテゴリ別商品一覧（sort対応）
+	// カテゴリ別商品一覧（sort対応）
 	@GetMapping("/{categoryId}")
 	public String categoryProducts(
 			@PathVariable Integer categoryId,
-			@RequestParam(defaultValue = "new") String sort, // 修正（Java）
+			@RequestParam(defaultValue = "new") String sort,
 			Pageable pageable,
 			Model model) {
 
-		// 修正（Java）：一覧と同じロジック（active + sort + category）
+		// 一覧と同じロジック（active + sort + category）
 		Page<Product> productPage = productService.findActiveProducts(sort, pageable, categoryId);
 
 		model.addAttribute("productPage", productPage);
 		model.addAttribute("categoryId", categoryId);
-		model.addAttribute("sort", sort); // 修正（Java）：画面でリンク維持に使う
+		model.addAttribute("sort", sort); // 画面でリンク維持に使う
 
 		return "categories/index";
 	}

@@ -22,12 +22,25 @@
 							<p class="ec-auth-eyebrow">LOGIN</p>
 							<h1 class="ec-auth-title">ログイン</h1>
 						</div>
+
+						<!-- 修正（HTML）：会員情報更新やメール変更後の案内を表示 -->
+						<div class="alert alert-success mb-4" th:if="${successMessage}" th:text="${successMessage}">
+							完了メッセージ
+						</div>
+
+						<!-- 修正（HTML）：ログイン失敗時のメッセージを表示 -->
+						<div class="alert alert-danger mb-4" th:if="${param.error}">
+							メールアドレスまたはパスワードが正しくありません。
+						</div>
+
 						<form th:action="@{/login}" method="post">
+
+							<!-- 修正（HTML）：CSRFトークン -->
+							<input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
 
 							<div class="mb-4">
 								<label class="ec-login-label">メールアドレス</label>
-								<input type="text" class="form-control ec-login-input" name="email"
-									required><!-- 修正（HTML） -->
+								<input type="text" class="form-control ec-login-input" name="email" required>
 							</div>
 
 							<div class="mb-5">

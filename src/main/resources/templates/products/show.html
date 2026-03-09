@@ -67,9 +67,15 @@
 											</div>
 										</div>
 
+										<!-- 修正（HTML）：在庫表示を見やすく変更 -->
 										<div class="mb-3" th:if="${stock != null}">
 											<div class="text-muted">在庫</div>
-											<div class="fs-5" th:text="${stock} + '個'">0個</div>
+											<div th:if="${stock > 0}" class="fs-5 text-success fw-semibold">
+												在庫あり（残り<span th:text="${stock}">0</span>点）
+											</div>
+											<div th:if="${stock == 0}" class="fs-5 text-danger fw-semibold">
+												在庫切れ
+											</div>
 										</div>
 
 										<div class="mb-4">
@@ -86,22 +92,26 @@
 
 												<div class="text-muted">数量</div>
 
+												<!-- 修正（HTML）：在庫0なら数量入力も無効化 -->
 												<input type="number" class="form-control flex-shrink-0" name="quantity"
-													value="1" min="1" style="width: 90px;">
+													value="1" min="1" style="width: 90px;" th:disabled="${stock == 0}">
 
 												<input type="hidden" th:name="${_csrf.parameterName}"
 													th:value="${_csrf.token}">
 
+												<!-- 修正（HTML）：在庫0ならカートボタンを無効化 -->
 												<button type="submit"
-													class="btn btn-dark ec-cart-btn cart-button flex-grow-1 px-4 py-3 d-flex justify-content-center align-items-center">
+													class="btn btn-dark ec-cart-btn cart-button flex-grow-1 px-4 py-3 d-flex justify-content-center align-items-center"
+													th:disabled="${stock == 0}">
 													カートに入れる
 												</button>
 
 											</form>
 
 											<button type="button" class="ec-fav-btn favorite-button flex-shrink-0"
-												th:attr="data-product-id=${product.id}" th:with="favorited=${favoriteProductIdSet != null &&
-												favoriteProductIdSet.contains(product.id)}" aria-label="favorite">
+												th:attr="data-product-id=${product.id}"
+												th:with="favorited=${favoriteProductIdSet != null && favoriteProductIdSet.contains(product.id)}"
+												aria-label="favorite">
 
 												<i class="bi"
 													th:classappend="${favorited} ? ' bi-heart-fill is-favorited' : ' bi-heart'"

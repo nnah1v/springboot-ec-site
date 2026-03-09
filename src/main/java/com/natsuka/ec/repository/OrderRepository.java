@@ -10,6 +10,6 @@ import com.natsuka.ec.entity.Order;
 @Repository
 public interface OrderRepository extends JpaRepository<Order, Integer> {
 
-	// 修正（Java）：ユーザーの注文履歴取得（新しい順）
+	//ユーザーの注文履歴取得（新しい順）
 	List<Order> findByUserIdOrderByCreatedAtDesc(Integer userId);
 }

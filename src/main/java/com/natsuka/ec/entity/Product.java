@@ -30,9 +30,11 @@ public class Product {
 	@Column(name = "description")
 	private String description;
 
-	// 修正（Java）：カテゴリID
 	@Column(name = "category_id")
 	private Integer categoryId;
+
+	@Column(name = "category") // 互換列もEntityに持つ
+	private String category;
 
 	@Column(name = "image_name")
 	private String imageName;

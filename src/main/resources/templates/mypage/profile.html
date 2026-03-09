@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html xmlns:th="https://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head>
+	<div th:replace="~{fragment :: meta}"></div>
+	<div th:replace="~{fragment :: styles}"></div>
+	<title>会員情報</title>
+</head>
+
+<body>
+
+	<div th:replace="~{fragment :: header}"></div>
+
+	<main class="container py-5" style="max-width:1000px;">
+
+		<h1 class="fw-light mb-5 border-bottom pb-3">Profile</h1>
+
+		<div class="row justify-content-center">
+			<div class="col-lg-10">
+
+				<div class="card border-0 shadow-sm">
+					<div class="card-body p-4 p-md-5">
+
+						<!-- 修正（HTML）：更新完了メッセージ -->
+						<div class="alert alert-success mb-4" th:if="${successMessage}" th:text="${successMessage}">
+						</div>
+
+						<div class="row g-0 border-bottom py-3">
+							<div class="col-md-3 text-muted">ニックネーム</div>
+							<div class="col-md-9 fw-semibold" th:text="${user.getNickname()}">
+								nickname
+							</div>
+						</div>
+
+						<div class="row g-0 border-bottom py-3">
+							<div class="col-md-3 text-muted">氏名</div>
+							<div class="col-md-9 fw-semibold" th:text="${user.getName()}">
+								name
+							</div>
+						</div>
+
+						<div class="row g-0 border-bottom py-3">
+							<div class="col-md-3 text-muted">フリガナ</div>
+							<div class="col-md-9 fw-semibold" th:text="${user.getFurigana()}">
+								furigana
+							</div>
+						</div>
+
+						<div class="row g-0 border-bottom py-3">
+							<div class="col-md-3 text-muted">郵便番号</div>
+							<div class="col-md-9 fw-semibold" th:text="${user.getPostalCode()}">
+								postalCode
+							</div>
+						</div>
+
+						<div class="row g-0 border-bottom py-3">
+							<div class="col-md-3 text-muted">住所</div>
+							<div class="col-md-9 fw-semibold" th:text="${user.getAddress()}">
+								address
+							</div>
+						</div>
+
+						<div class="row g-0 border-bottom py-3">
+							<div class="col-md-3 text-muted">電話番号</div>
+							<div class="col-md-9 fw-semibold" th:text="${user.getPhoneNumber()}">
+								phoneNumber
+							</div>
+						</div>
+						<div class="row g-0 py-3">
+							<div class="col-md-3 text-muted">メールアドレス</div>
+							<div class="col-md-9 fw-semibold" th:text="${user.getEmail()}">
+								email
+							</div>
+						</div>
+
+						<div class="d-flex justify-content-between mt-5">
+
+							<a th:href="@{/products}" class="btn btn-outline-dark">
+								買い物を続ける
+							</a>
+
+							<div class="d-flex gap-2">
+
+								<a th:href="@{/mypage/profile/edit}" class="btn btn-outline-dark">
+									編集する
+								</a>
+
+								<a th:href="@{/orders}" class="btn btn-dark">
+									注文履歴
+								</a>
+
+							</div>
+
+						</div>
+
+					</div>
+				</div>
+
+			</div>
+		</div>
+
+	</main>
+
+	<div th:replace="~{fragment :: footer}"></div>
+	<div th:replace="~{fragment :: scripts}"></div>
+
+</body>
+
+</html>

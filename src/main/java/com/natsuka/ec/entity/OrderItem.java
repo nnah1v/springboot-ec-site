@@ -21,22 +21,22 @@ public class OrderItem {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer id;
 
-	// 修正（Java）：注文
+	// 注文
 	@ManyToOne
 	@JoinColumn(name = "order_id", nullable = false)
 	private Order order;
 
-	// 修正（Java）：商品
+	// 商品
 	@ManyToOne
 	@JoinColumn(name = "product_id", nullable = false)
 	private Product product;
 
-	// 修正（Java）：数量
+	// 数量
 	private Integer quantity;
 
-	// 修正（Java）：購入時の単価
+	// 購入時の単価
 	private Integer unitPrice;
 
-	// 修正（Java）：行合計
+	// 行合計
 	private Integer lineTotal;
 }

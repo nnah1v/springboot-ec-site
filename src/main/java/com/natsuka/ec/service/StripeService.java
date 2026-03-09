@@ -18,6 +18,8 @@ import com.stripe.model.checkout.Session;
 import com.stripe.param.checkout.SessionCreateParams;
 import com.stripe.param.checkout.SessionRetrieveParams;
 
+// Stripe決済処理サービス
+// Checkout作成とWebhook処理を担当
 @Service
 public class StripeService {
 
@@ -27,30 +29,46 @@ public class StripeService {
 	private final CartService cartService;
 	private final OrderService orderService;
 	private final ObjectMapper objectMapper;
+	private final InventoryService inventoryService;
 
-	public StripeService(CartService cartService, OrderService orderService, ObjectMapper objectMapper) {
+	public StripeService(
+			CartService cartService,
+			OrderService orderService,
+			ObjectMapper objectMapper,
+			InventoryService inventoryService) {
+
 		this.cartService = cartService;
 		this.orderService = orderService;
 		this.objectMapper = objectMapper;
+		this.inventoryService = inventoryService;
 	}
 
+	// Stripe Checkout Session作成
 	public String createStripeSession(Integer userId, HttpServletRequest httpServletRequest) {
 
-		// 修正（Java）：入力不正対策
 		if (userId == null) {
 			return "";
 		}
 
+		// カート取得
 		List<CartItem> cartItems = cartService.findCartItems(userId);
 
-		// 修正（Java）：カートが空ならStripeへ進ませない
 		if (cartItems.isEmpty()) {
 			return "";
 		}
 
+		// 決済前の在庫チェック
+		for (CartItem cartItem : cartItems) {
+
+			Integer availableStock = inventoryService.getAvailableStock(cartItem.getProduct().getId());
+
+			if (availableStock == null || cartItem.getQuantity() > availableStock) {
+				return "";
+			}
+		}
+
 		int totalAmount = cartService.calculateFinalAmount(userId);
 
-		// 修正（Java）：安全のため0円以下は弾く
 		if (totalAmount <= 0) {
 			return "";
 		}
@@ -58,12 +76,12 @@ public class StripeService {
 		Stripe.apiKey = stripeApiKey;
 
 		String requestUrl = new String(httpServletRequest.getRequestURL());
-
-		// 修正（Java）：Stripeの商品名。最小構成として固定文言にする
 		String productName = "ご注文商品";
 
 		SessionCreateParams params = SessionCreateParams.builder()
 				.addPaymentMethodType(SessionCreateParams.PaymentMethodType.CARD)
+
+				// Stripe表示用の注文データ
 				.addLineItem(
 						SessionCreateParams.LineItem.builder()
 								.setPriceData(
@@ -77,16 +95,21 @@ public class StripeService {
 												.build())
 								.setQuantity(1L)
 								.build())
+
 				.setMode(SessionCreateParams.Mode.PAYMENT)
-				.setSuccessUrl(
-						requestUrl.replace("/orders", "") + "/orders/complete")
-				.setCancelUrl(
-						requestUrl.replace("/orders", "") + "/cart")
+
+				// 決済成功時
+				.setSuccessUrl(requestUrl.replace("/orders", "") + "/orders/complete")
+
+				// 決済キャンセル時
+				.setCancelUrl(requestUrl.replace("/orders", "") + "/cart")
+
+				// Webhookで使用するユーザーID
 				.setPaymentIntentData(
 						SessionCreateParams.PaymentIntentData.builder()
-								// 修正（Java）：Webhookで注文保存に必要な最小情報だけ持たせる
 								.putMetadata("userId", userId.toString())
 								.build())
+
 				.build();
 
 		try {
@@ -98,37 +121,41 @@ public class StripeService {
 		}
 	}
 
+	// Stripe Webhook処理
 	public void processSessionCompleted(Event event, String payload) {
 
 		Stripe.apiKey = stripeApiKey;
 
 		try {
+
+			// JSON payload 解析
 			JsonNode rootNode = objectMapper.readTree(payload);
 
 			String sessionId = rootNode.path("data").path("object").path("id").asText();
 
-			// 修正（Java）：sessionIdが不正なら終了
 			if (sessionId == null || sessionId.isBlank() || !sessionId.startsWith("cs_")) {
 				return;
 			}
 
+			// payment_intent 展開取得
 			SessionRetrieveParams params = SessionRetrieveParams.builder()
 					.addExpand("payment_intent")
 					.build();
 
 			Session session = Session.retrieve(sessionId, params, null);
 
+			// metadata取得
 			Map<String, String> paymentIntentMetadata = session.getPaymentIntentObject().getMetadata();
 
-			// 修正（Java）：metadataからuserId取得
 			String userIdText = paymentIntentMetadata.get("userId");
+
 			if (userIdText == null || userIdText.isBlank()) {
 				return;
 			}
 
 			Integer userId = Integer.valueOf(userIdText);
 
-			// 修正（Java）：決済完了後にDB保存
+			// 注文生成
 			orderService.createOrder(userId);
 
 		} catch (Exception exception) {

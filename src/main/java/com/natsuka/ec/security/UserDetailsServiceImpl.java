@@ -27,13 +27,18 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 		User user = userRepository.findByEmail(email)
 				.orElseThrow(() -> new UsernameNotFoundException("User not found: " + email));
 
-		String roleName = (user.getRoleId() != null && user.getRoleId() == 2) ? "ROLE_ADMIN" : "ROLE_USER";
+		// role_id=2 を管理者、それ以外を一般ユーザーとして扱う
+		String roleName = (user.getRoleId() != null && user.getRoleId().equals(2)) ? "ROLE_ADMIN" : "ROLE_USER";
+
+		// Spring Security用の権限リストを作成
 		List<GrantedAuthority> authorities = List.of(new SimpleGrantedAuthority(roleName));
 
 		return org.springframework.security.core.userdetails.User
+				// ログイン識別子としてメールアドレスを使用
 				.withUsername(user.getEmail())
 				.password(user.getPassword())
 				.authorities(authorities)
+				// enabled=false のユーザーはログイン不可
 				.disabled(user.getEnabled() != null && !user.getEnabled())
 				.build();
 	}

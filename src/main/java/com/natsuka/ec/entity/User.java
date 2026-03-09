@@ -23,8 +23,8 @@ public class User {
 	@Column(nullable = false)
 	private String furigana;
 
-	@Column(nullable = false) // 修正（Java）
-	private String nickname; // 修正（Java）
+	@Column(nullable = false)
+	private String nickname;
 
 	@Column(name = "postal_code", nullable = false)
 	private String postalCode;

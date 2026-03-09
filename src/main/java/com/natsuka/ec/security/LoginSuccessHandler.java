@@ -21,8 +21,8 @@ import com.natsuka.ec.service.FavoriteService;
 @Component
 public class LoginSuccessHandler implements AuthenticationSuccessHandler {
 
-	private static final String SESSION_CART_KEY = "SESSION_CART"; // 修正（Java）
-	private static final String SESSION_FAVORITES_KEY = "SESSION_FAVORITES"; // 修正（Java）
+	private static final String SESSION_CART_KEY = "SESSION_CART"; 
+	private static final String SESSION_FAVORITES_KEY = "SESSION_FAVORITES"; 
 
 	private final UserRepository userRepository;
 	private final CartService cartService;
@@ -44,7 +44,7 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler {
 			HttpServletResponse response,
 			Authentication authentication) throws IOException, ServletException {
 
-		// 修正（Java）：authentication/emailが取れないなら通常遷移
+		//authentication/emailが取れないなら通常遷移
 		if (authentication == null || authentication.getName() == null) {
 			response.sendRedirect("/mypage");
 			return;
@@ -61,30 +61,30 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler {
 			return;
 		}
 
-		// 修正（Java）：migrateSession後の新セッションを確実に掴む
+		//migrateSession後の新セッションを確実に掴む
 		HttpSession session = request.getSession();
 
-		// 修正（Java）：型安全に取得（ClassCastException回避）
+		//型安全に取得（ClassCastException回避）
 		Object cartObj = session.getAttribute(SESSION_CART_KEY);
 		SessionCart sessionCart = (cartObj instanceof SessionCart) ? (SessionCart) cartObj : null;
 
 		Object favObj = session.getAttribute(SESSION_FAVORITES_KEY);
 		SessionFavorites sessionFavorites = (favObj instanceof SessionFavorites) ? (SessionFavorites) favObj : null;
 
-		// 修正（Java）：存在する時だけマージ
+		//存在する時だけマージ
 		if (sessionCart != null) {
 			cartService.mergeSessionCartToUser(userId, sessionCart);
-			session.removeAttribute(SESSION_CART_KEY); // 修正（Java）：二重加算防止
+			session.removeAttribute(SESSION_CART_KEY); //二重加算防止
 		}
 
 		if (sessionFavorites != null) {
 			favoriteService.mergeSessionFavorites(userId, sessionFavorites);
-			session.removeAttribute(SESSION_FAVORITES_KEY); // 修正（Java）：二重登録防止
+			session.removeAttribute(SESSION_FAVORITES_KEY); //二重登録防止
 		}
 
 		response.sendRedirect("/mypage");
 
-		// 修正（Java）：デバッグ（確認できたら消してOK）
+		//デバッグ（確認できたら消してOK）
 		System.out.println("LOGIN success sessionId = " + session.getId());
 		System.out.println("LOGIN success SESSION_CART attr = " + session.getAttribute("SESSION_CART"));
 		System.out.println("LOGIN success SESSION_FAVORITES attr = " + session.getAttribute("SESSION_FAVORITES"));
